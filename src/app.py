@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from ucimlrepo import fetch_ucirepo 
 
 st.header("FairPay: Empowering Fairness in Interactive Income Analysis")
-st.write("Team members: Yen-Ju Wu (yenjuw@andrew.cmu.edu) and Chien-Yu Liu (chienyul@andrew.cmu.edu)")
+st.write("Team members: Yen-Ju Wu (yenjuw@andrew.cmu.edu) and Chien-Yu Liu (chienyul@andrew.cmu.edu) and Jyoshna Sarva (jsarva@andrew.cmu.edu)")
 
 @st.cache_data
 def load_data():
@@ -20,7 +20,7 @@ def load_data():
 
 def plot_feature_distribution(X):
   ##### selectbox #####
-  feature_names = ['age', 'education', 'marital-status', 'race', 'sex', 'native-country']
+  feature_names = ['age', 'education', 'marital-status', 'race', 'sex']
   label_name = ['income']
   feature_select = st.selectbox('Feature distribution', feature_names)
 
