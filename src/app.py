@@ -19,10 +19,10 @@ def load_data():
   return X, y
 
 def plot_feature_distribution(X):
-  ##### multiselect #####
+  ##### selectbox #####
   feature_names = ['age', 'education', 'martial-status', 'race', 'sex', 'native-country']
   label_name = ['income']
-  feature_select = st.multiselect('Feature distribution', feature_names)
+  feature_select = st.selectbox('Feature distribution', feature_names)
 
   # Plot distribution of selected feature
   if feature_select:
