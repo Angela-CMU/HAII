@@ -158,16 +158,83 @@ def build_model(X, y):
     
     return model
 
+def plot_race_and_income(df):
+    #Sex Pie Chart
+    sex_value_counts = df['sex'].value_counts()
+    sex_df = pd.DataFrame({'sex': sex_value_counts.index, 'Count': sex_value_counts.values})
+    sex_pie_chart = alt.Chart(sex_df).mark_arc().encode(
+        color='sex:N',
+        theta='Count:Q',
+        tooltip=['sex', 'Count']
+    ).properties(
+        width=400,
+        height=400,
+        title='Pie Chart: Gender Distribution'
+    )
+    sex_pie_chart
+
+    #Race Pie Chart
+    race_value_counts = df['race'].value_counts()
+    race_df = pd.DataFrame({'race': race_value_counts.index, 'Count': race_value_counts.values})
+    race_pie_chart = alt.Chart(race_df).mark_arc().encode(
+        color='race:N',
+        theta='Count:Q',
+        tooltip=['race', 'Count']
+    ).properties(
+        width=400,
+        height=400,
+        title='Pie Chart: Race Distribution'
+    )
+    race_pie_chart
+
+    #Filters
+    age_filter=st.sidebar.slider('Age:',min_value=min(df['age']),max_value=max(df['age']),value=(min(df['age']),max(df['age'])))
+    df = df[(df["age"] >= age_filter[0]) & (df["age"] <= age_filter[1])]
+
+    sex=['Male','Female']
+    sex_filter = st.sidebar.selectbox('Gender:',sex)
+    df = df[df['sex'] == sex_filter]
+
+    workclass_filter=st.sidebar.multiselect('Work class:',df['workclass'].unique())
+    if len(workclass_filter) != 0:
+       df = df[(df['workclass'].isin(workclass_filter))]
+
+    marital_status_filter=st.sidebar.multiselect('Marital status:',df['marital-status'].unique())
+    if len(marital_status_filter) != 0:
+        df = df[(df['marital-status'].isin(marital_status_filter))]
+
+    race_filter=st.sidebar.multiselect('Race:',df['race'].unique())
+    if len(race_filter) != 0:
+        df = df[(df['race'].isin(race_filter))]
+
+    st.subheader("Analyzing fairness in income")
+    bar_race_income = alt.Chart(df).mark_bar().encode(
+        x='race:N',
+        y='count():Q',
+        color='income:N'
+    ).properties(
+        width=800,
+        height=600
+    ).configure_axisX(
+        labelAngle=-90
+    )
+    bar_race_income
+
+    return df
+
 def main():
   X, y = load_data()
   st.dataframe(X.head())
 
   plot_feature_distribution(X)
   plot_two_feature_distribution(X)
-
   y_series = y['income'].str.replace('.', '')
   y_series.value_counts()
-  model = build_model(X, y_series)
+
+  df = pd.concat([X, y_series], axis=1, sort=False)
+  df = plot_race_and_income(df)
+
+  model = build_model(df.drop(columns=['income']), df['income'])
 
 if __name__ == '__main__':
   main()
