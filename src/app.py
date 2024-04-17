@@ -156,7 +156,7 @@ def build_model(X, y):
 
     model = train_model(X_train_up_preprocessed, X_test_preprocessed, y_train_up.reset_index(drop=True), y_test.reset_index(drop=True))
     
-    return model
+    return scaler, enc, model
 
 def plot_race_and_income(df):
     #Sex Pie Chart
@@ -191,8 +191,7 @@ def plot_race_and_income(df):
     age_filter=st.sidebar.slider('Age:',min_value=min(df['age']),max_value=max(df['age']),value=(min(df['age']),max(df['age'])))
     df = df[(df["age"] >= age_filter[0]) & (df["age"] <= age_filter[1])]
 
-    sex=['Male','Female']
-    sex_filter = st.sidebar.selectbox('Gender:',sex)
+    sex_filter = st.sidebar.selectbox('Gender:',df['sex'].unique())
     df = df[df['sex'] == sex_filter]
 
     workclass_filter=st.sidebar.multiselect('Work class:',df['workclass'].unique())
@@ -222,19 +221,69 @@ def plot_race_and_income(df):
 
     return df
 
+def get_user_inp(model, original_X):
+   # Get User Input
+   st.subheader("User Input Prediction:")
+
+   user_data_point = {
+      'age' : st.sidebar.number_input('Age:',min_value=min(original_X['age']),max_value=max(original_X['age']),value=min(original_X['age'])),
+      'workclass' : st.sidebar.selectbox('Workclass:',original_X['workclass'].unique()),
+      'fnlwgt' : st.sidebar.number_input('fnlwgt:',min_value=min(original_X['fnlwgt']),max_value=max(original_X['fnlwgt']),value=min(original_X['fnlwgt'])),
+      'education' : st.sidebar.selectbox('Education:',sorted(original_X['education'].unique())),
+      'education-num' : st.sidebar.selectbox('Education Number:',sorted(original_X['education-num'].unique())),
+      'marital-status' : st.sidebar.selectbox('Marital Status:',sorted(original_X['marital-status'].unique())),
+      'occupation' : st.sidebar.selectbox('Occupation:',original_X['occupation'].unique()),
+      'relationship' : st.sidebar.selectbox('Relationship:',sorted(original_X['relationship'].unique())),
+      'race' : st.sidebar.selectbox('Race:',sorted(original_X['race'].unique())),
+      'sex' : st.sidebar.selectbox('Gender:', original_X['sex'].unique()),
+      'capital-gain' : st.sidebar.number_input('Capital-gain:',min_value=min(original_X['capital-gain']),max_value=max(original_X['capital-gain']),value=min(original_X['capital-gain'])),
+      'capital-loss' : st.sidebar.number_input('Capital-loss:',min_value=min(original_X['capital-loss']),max_value=max(original_X['capital-loss']),value=min(original_X['capital-loss'])),
+      'hours-per-week' : st.sidebar.number_input('Hours-per-week:',min_value=min(original_X['hours-per-week']),max_value=max(original_X['hours-per-week']),value=min(original_X['hours-per-week'])),
+      'native-country' : st.sidebar.selectbox('Native-country:',original_X['native-country'].unique())
+   }
+   user_inp_data = pd.DataFrame([user_data_point], columns=original_X.columns)
+#    st.dataframe(user_inp_data)
+   return user_inp_data
+   
 def main():
-  X, y = load_data()
-  st.dataframe(X.head())
+    for k in ['scaler', 'enc', 'model', 'original_X']:
+        if k not in st.session_state:
+            st.session_state[k] = None
+    
+    select_page = st.sidebar.radio("Select Page:", ["Introduction", "User input prediction"])
 
-  plot_feature_distribution(X)
-  plot_two_feature_distribution(X)
-  y_series = y['income'].str.replace('.', '')
-  y_series.value_counts()
+    if select_page == "Introduction":
+        #Introduction page
+        X, y = load_data()
+        original_X = X.copy()
+        # st.dataframe(X.head())
+        
+        plot_feature_distribution(X)
+        plot_two_feature_distribution(X)
+        y_series = y['income'].str.replace('.', '')
+        y_series.value_counts()
+        df = pd.concat([X, y_series], axis=1, sort=False)
+        df = plot_race_and_income(df)
 
-  df = pd.concat([X, y_series], axis=1, sort=False)
-  df = plot_race_and_income(df)
+        scaler, enc, model = build_model(df.drop(columns=['income']), df['income'])  
+        st.session_state['scaler'] = scaler
+        st.session_state['enc'] = enc
+        st.session_state['model'] = model
+        st.session_state['original_X'] = original_X
 
-  model = build_model(df.drop(columns=['income']), df['income'])
+    elif select_page == "User input prediction":
+        #User input prediction
+        scaler = st.session_state['scaler']
+        enc = st.session_state['enc']
+        model = st.session_state['model']
+        original_X = st.session_state['original_X']
+        X_user = get_user_inp(model, original_X)
+
+        X_user_preprocess = preprocessing_data(X_user, enc, scaler)
+        y_user = model.predict(X_user_preprocess)[0]
+
+        if st.button('Predict'):
+            st.success(f"Income: {y_user}")
 
 if __name__ == '__main__':
   main()
