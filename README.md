@@ -40,5 +40,7 @@ Throughout our project, we've identified some potential biases.
 - Firstly, there's a sampling bias, where over 90% of the data is derived from white individuals and over 66% from males. This imbalance in the data renders it unrepresentative of each demographic group, thereby limiting the generalizability of our results to the broader population. 
 - Secondly, there's a concern regarding response bias, as the data is collected through survey responses. This prompts questions about the honesty of respondents and whether there were adequate data validation processes in place to ensure the reliability of the information collected.
 
+Our main conclusion emphasizes that bias can arise not only from models but also from the process of data collection itself. Therefore, it's vital to establish guidelines for fair data collection to effectively mitigate potential biases.
+
 
 
