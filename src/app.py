@@ -14,9 +14,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
 
-features_cat = ['workclass', 'education', 'race', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
-features_num = ['age', 'fnlwgt', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
-
 st.header("FairPay: Empowering Fairness in Interactive Income Analysis")
 st.write("Team members: Yen-Ju Wu (yenjuw@andrew.cmu.edu) and Chien-Yu Liu (chienyul@andrew.cmu.edu) and Jyoshna Sarva (jsarva@andrew.cmu.edu)")
 
@@ -75,7 +72,7 @@ def plot_two_feature_distribution(X):
 
 
 # models
-def build_encoder(X_train):
+def build_encoder(X_train, features_cat, features_num):
     X_cat = X_train[features_cat]
     X_num = X_train[features_num]
     
@@ -87,7 +84,7 @@ def build_encoder(X_train):
 
     return enc, scaler
 
-def preprocessing_data(X, enc, scaler):
+def preprocessing_data(X, enc, scaler, features_cat, features_num):
     X_cat = X[features_cat]
     X_num = X[features_num]
 
@@ -137,12 +134,9 @@ def train_model(X_train, X_test, y_train, y_test):
 
     return model
 
-def build_model(X, y):
-
+def build_model(X, y, features_cat, features_num):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=1) # split out into training 70% of our data
-    global enc
-    global scaler
-    enc, scaler = build_encoder(X_train)
+    enc, scaler = build_encoder(X_train, features_cat, features_num)
     
     # # preprocessing then upsample
     # # (after preprocessing the X_train_preprocessed is reset, so y_train needs to be reset as well)
@@ -151,8 +145,8 @@ def build_model(X, y):
     
     # upsample then preprocessing
     X_train_up, y_train_up = upsample(X_train, y_train)
-    X_train_up_preprocessed = preprocessing_data(X_train_up, enc, scaler)
-    X_test_preprocessed = preprocessing_data(X_test, enc, scaler)
+    X_train_up_preprocessed = preprocessing_data(X_train_up, enc, scaler, features_cat, features_num)
+    X_test_preprocessed = preprocessing_data(X_test, enc, scaler, features_cat, features_num)
 
     model = train_model(X_train_up_preprocessed, X_test_preprocessed, y_train_up.reset_index(drop=True), y_test.reset_index(drop=True))
     
@@ -252,6 +246,9 @@ def main():
     
     select_page = st.sidebar.radio("Select Page:", ["Introduction", "User input prediction"])
 
+    features_cat = ['workclass', 'education', 'race', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
+    features_num = ['age', 'fnlwgt', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
+
     if select_page == "Introduction":
         #Introduction page
         X, y = load_data()
@@ -265,22 +262,22 @@ def main():
         df = pd.concat([X, y_series], axis=1, sort=False)
         df = plot_race_and_income(df)
 
-        scaler, enc, model = build_model(df.drop(columns=['income']), df['income'])  
+        scaler, enc, model_full_features = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num)  
         st.session_state['scaler'] = scaler
         st.session_state['enc'] = enc
-        st.session_state['model'] = model
+        st.session_state['model'] = model_full_features
         st.session_state['original_X'] = original_X
 
     elif select_page == "User input prediction":
         #User input prediction
         scaler = st.session_state['scaler']
         enc = st.session_state['enc']
-        model = st.session_state['model']
+        model_full_features = st.session_state['model']
         original_X = st.session_state['original_X']
-        X_user = get_user_inp(model, original_X)
+        X_user = get_user_inp(model_full_features, original_X)
 
-        X_user_preprocess = preprocessing_data(X_user, enc, scaler)
-        y_user = model.predict(X_user_preprocess)[0]
+        X_user_preprocess = preprocessing_data(X_user, enc, scaler, features_cat, features_num)
+        y_user = model_full_features.predict(X_user_preprocess)[0]
 
         if st.button('Predict'):
             st.success(f"Income: {y_user}")
