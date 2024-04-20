@@ -246,7 +246,7 @@ def main():
     
     select_page = st.sidebar.radio("Select Page:", ["Introduction", "User input prediction"])
 
-    features_cat = ['workclass', 'education', 'race', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
+    features_cat = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
     features_num = ['age', 'fnlwgt', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
 
     if select_page == "Introduction":
