@@ -135,6 +135,7 @@ def plot_feature_vs_income(df):
         # st.write(type(feature_value_counts_concat))
 
         feature_value_counts_concat['feature_income_ratio'] = (feature_value_counts_concat['count_larger_50k'] / feature_value_counts_concat['count']) * 100
+        feature_value_counts_concat['index_name'] = feature_value_counts_concat.index
 
         # feature_income_ratio = feature_value_counts_concat.apply(lambda x: x.count_larger_50k / x.count * 100)
         # st.dataframe(feature_income_ratio)
@@ -142,7 +143,7 @@ def plot_feature_vs_income(df):
         st.write(feature_value_counts_concat.index)
 
         feature_bar_chart = alt.Chart(feature_value_counts_concat).mark_bar().encode(
-            x='index:N',
+            x='index_name:N',
             y='feature_income_ratio:Q',
         ).properties(
             width=500,
