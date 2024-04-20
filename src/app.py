@@ -124,7 +124,12 @@ def upsample(X_train, y_train):
 # helper method to print basic model metrics
 def metrics(y_true, y_pred):
     st.write('Confusion matrix:\n', confusion_matrix(y_true, y_pred))
-    st.write('\nReport:\n', classification_report(y_true, y_pred, digits=4))
+
+    report = classification_report(y_true, y_pred, digits=4, output_dict=True)
+    report_df = pd.DataFrame(report).transpose()
+
+    st.write('Classification report: \n')
+    st.write(report_df.reset_index().rename(columns={'index': 'Report'}))
 
 def train_model(X_train, X_test, y_train, y_test):
     # model = LogisticRegression(solver='lbfgs').fit(X_train, y_train) # first fit (train) the model
