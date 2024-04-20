@@ -131,9 +131,11 @@ def metrics(y_true, y_pred):
     st.write('Classification report: \n')
     st.write(report_df.reset_index().rename(columns={'index': 'Report'}))
 
-def train_model(X_train, X_test, y_train, y_test, print_report):
-    # model = LogisticRegression(solver='lbfgs').fit(X_train, y_train) # first fit (train) the model
-    model = RandomForestClassifier().fit(X_train, y_train) # first fit (train) the model
+def train_model(X_train, X_test, y_train, y_test, model_type, print_report):
+    if model_type == "Logistic Regression":
+        model = LogisticRegression(solver='lbfgs').fit(X_train, y_train) # first fit (train) the model
+    elif model_type == "Random Forest":
+        model = RandomForestClassifier().fit(X_train, y_train) # first fit (train) the model
 
     if print_report:
         y_pred = model.predict(X_test) # next get the model's predictions for a sample in the validation set
@@ -141,7 +143,7 @@ def train_model(X_train, X_test, y_train, y_test, print_report):
 
     return model
 
-def build_model(X, y, features_cat, features_num, print_report=False):
+def build_model(X, y, features_cat, features_num, model_type, print_report=False):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=1) # split out into training 70% of our data
     enc, scaler = build_encoder(X_train, features_cat, features_num)
     
@@ -155,7 +157,7 @@ def build_model(X, y, features_cat, features_num, print_report=False):
     X_train_up_preprocessed = preprocessing_data(X_train_up, enc, scaler, features_cat, features_num)
     X_test_preprocessed = preprocessing_data(X_test, enc, scaler, features_cat, features_num)
 
-    model = train_model(X_train_up_preprocessed, X_test_preprocessed, y_train_up.reset_index(drop=True), y_test.reset_index(drop=True), print_report)
+    model = train_model(X_train_up_preprocessed, X_test_preprocessed, y_train_up.reset_index(drop=True), y_test.reset_index(drop=True), model_type, print_report)
     
     return scaler, enc, model
 
@@ -280,34 +282,44 @@ def main():
         plot_two_feature_distribution(X)
         _ = plot_race_and_income(df)
 
-        # build the original model
-        st.markdown("Building the model with the data sets...")
-        _, _, _ = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, print_report=True)
-        st.markdown("Completed!")
+        ##### selectbox #####
+        model_types = ['Logistic Regression', 'Random Forest']
+        model_select = st.selectbox('Model Types', model_types)
+
+        # Plot distribution of selected feature
+        if model_select:
+            st.markdown("Building the model with the data sets...")
+            _, _, _ = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, model_select, print_report=True)
+            st.markdown("Completed!")
         
     elif select_page == "User input prediction":
-        X_user = get_user_inp(original_X)
+        ##### selectbox #####
+        model_types = ['Logistic Regression', 'Random Forest']
+        model_select = st.selectbox('Model Types', model_types)
 
-        if st.button('Predict with original model'):
-            # build the original model
-            scaler, enc, model = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num)
-            X_user_preprocess = preprocessing_data(X_user, enc, scaler, features_cat, features_num)
-            y_user = model.predict(X_user_preprocess)[0] 
-            st.success(f"Income: {y_user}")
-        
-        if st.button('Predict with model without considering sex'):
-            features_cat_without_sex = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'native-country']
-            scaler_without_sex, enc_without_sex, model_without_sex = build_model(df.drop(columns=['income']), df['income'], features_cat_without_sex, features_num)
-            X_user_preprocess_without_sex = preprocessing_data(X_user, enc_without_sex, scaler_without_sex, features_cat_without_sex, features_num)
-            y_user_without_sex = model_without_sex.predict(X_user_preprocess_without_sex)[0]
-            st.success(f"Income: {y_user_without_sex}")
-        
-        if st.button('Predict with model without considering race'):
-            features_cat_without_race = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'sex', 'native-country']
-            scaler_without_race, enc_without_race, model_without_race = build_model(df.drop(columns=['income']), df['income'], features_cat_without_race, features_num)
-            X_user_preprocess_without_race = preprocessing_data(X_user, enc_without_race, scaler_without_race, features_cat_without_race, features_num)
-            y_user_without_race = model_without_race.predict(X_user_preprocess_without_race)[0]
-            st.success(f"Income: {y_user_without_race}")
+        if model_select:
+            X_user = get_user_inp(original_X)
+
+            if st.button('Predict with original model'):
+                # build the original model
+                scaler, enc, model = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, model_select)
+                X_user_preprocess = preprocessing_data(X_user, enc, scaler, features_cat, features_num)
+                y_user = model.predict(X_user_preprocess)[0] 
+                st.success(f"Income: {y_user}")
+            
+            if st.button('Predict with model without considering sex'):
+                features_cat_without_sex = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'native-country']
+                scaler_without_sex, enc_without_sex, model_without_sex = build_model(df.drop(columns=['income']), df['income'], features_cat_without_sex, features_num, model_select)
+                X_user_preprocess_without_sex = preprocessing_data(X_user, enc_without_sex, scaler_without_sex, features_cat_without_sex, features_num)
+                y_user_without_sex = model_without_sex.predict(X_user_preprocess_without_sex)[0]
+                st.success(f"Income: {y_user_without_sex}")
+            
+            if st.button('Predict with model without considering race'):
+                features_cat_without_race = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'sex', 'native-country']
+                scaler_without_race, enc_without_race, model_without_race = build_model(df.drop(columns=['income']), df['income'], features_cat_without_race, features_num, model_select)
+                X_user_preprocess_without_race = preprocessing_data(X_user, enc_without_race, scaler_without_race, features_cat_without_race, features_num)
+                y_user_without_race = model_without_race.predict(X_user_preprocess_without_race)[0]
+                st.success(f"Income: {y_user_without_race}")
         
 
 if __name__ == '__main__':
