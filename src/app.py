@@ -215,7 +215,7 @@ def plot_race_and_income(df):
 
     return df
 
-def get_user_inp(model, original_X):
+def get_user_inp(original_X):
     # Get User Input
     st.subheader("User Input Prediction:")
 
@@ -240,10 +240,6 @@ def get_user_inp(model, original_X):
     return user_inp_data
    
 def main(): 
-    for k in ['scaler', 'enc', 'model', 'original_X']:
-        if k not in st.session_state:
-            st.session_state[k] = None   
-    
     # load data
     X, y = load_data()
     original_X = X.copy()
@@ -264,29 +260,19 @@ def main():
         st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs. With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
         st.dataframe(X.head())
 
-        # build the original model
-        scaler, enc, model = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num)  
-        st.session_state['scaler'] = scaler
-        st.session_state['enc'] = enc
-        st.session_state['model'] = model
-        st.session_state['original_X'] = original_X
-
     elif select_page == "Data analysis":
         plot_feature_distribution(X)
         plot_two_feature_distribution(X)
         _ = plot_race_and_income(df)
 
     elif select_page == "User input prediction":
-        scaler = st.session_state['scaler']
-        enc = st.session_state['enc']
-        model = st.session_state['model']
-        original_X = st.session_state['original_X']
-        X_user = get_user_inp(model, original_X)
-
-        X_user_preprocess = preprocessing_data(X_user, enc, scaler, features_cat, features_num)
-        y_user = model.predict(X_user_preprocess)[0] 
+        X_user = get_user_inp(original_X)
 
         if st.button('Predict with original model'):
+            # build the original model
+            scaler, enc, model = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num)
+            X_user_preprocess = preprocessing_data(X_user, enc, scaler, features_cat, features_num)
+            y_user = model.predict(X_user_preprocess)[0] 
             st.success(f"Income: {y_user}")
         
         if st.button('Predict with model without considering sex'):
