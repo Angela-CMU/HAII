@@ -110,7 +110,30 @@ def plot_feature_vs_income(df):
     feature_select = st.selectbox('Feature distribution', feature_names, key='ratio')
 
     # Plot distribution of selected feature
-    if feature_select == 'race' or 'sex':
+    if feature_select == 'age':
+        age_bins = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        df_binned = df.copy()
+        df_binned['age_bins'] = pd.cut(df_binned['age'], bins=age_bins)
+        df_income_larger_50k = df_binned[df_binned['income'] == '>50K']
+
+        age_value_counts = df_binned['age_bins'].value_counts()
+        age_value_counts_larger_than_50k = df_income_larger_50k['age_bins'].value_counts().rename("count_larger_50k")
+        age_value_counts_concat = pd.concat([age_value_counts, age_value_counts_larger_than_50k], axis=1).fillna(0)
+
+        age_value_counts_concat['age_income_ratio'] = (age_value_counts_concat['count_larger_50k'] / age_value_counts_concat['count']) * 100
+        age_value_counts_concat['index_name'] = age_value_counts_concat.index
+
+        age_bar_chart = alt.Chart(age_value_counts_concat).mark_bar().encode(
+            x='index_name:N',
+            y=alt.Y('age_income_ratio:Q', title='Age Income Ratio (%)', scale=alt.Scale(domain=(0, 100))),
+        ).properties(
+            width=500,
+            height=500,
+            title='Bar Chart: ' + feature_select + ' vs. income distribution'
+        )
+        age_bar_chart
+
+    elif feature_select:
         # Bar Chart
         df_income_larger_50k = df[df['income'] == '>50K']
 
@@ -123,11 +146,11 @@ def plot_feature_vs_income(df):
 
         feature_bar_chart = alt.Chart(feature_value_counts_concat).mark_bar().encode(
             x='index_name:N',
-            y=alt.Y('feature_income_ratio:Q', title='Feature Income Ratio (%)', scale=alt.Scale(domain=(0, 100))),
+            y=alt.Y('feature_income_ratio:Q', title=feature_select + ' income Ratio (%)', scale=alt.Scale(domain=(0, 100))),
         ).properties(
             width=500,
             height=500,
-            title='Bar Chart: ' + feature_select + ' distribution'
+            title='Bar Chart: ' + feature_select + ' vs. income distribution'
         )
         feature_bar_chart
 
@@ -324,7 +347,7 @@ def main():
     features_num = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
 
     # select page in the left side of webpage    
-    select_page = st.sidebar.radio("Select Page:", ["Introduction", "Data analysis", "User input prediction"])
+    select_page = st.sidebar.radio("Select Page:", ["Introduction", "Data analysis", "Fairness analysis", "User input prediction"])
 
     if select_page == "Introduction":
         # st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs. With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
@@ -353,8 +376,9 @@ def main():
             _, _, _ = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, model_select, print_report=True)
             st.markdown("Completed!")
 
+    elif select_page == "Fairness analysis":
         plot_feature_vs_income(df)
-        
+
     elif select_page == "User input prediction":
         ##### selectbox #####
         model_types = ['Logistic Regression', 'Random Forest']
