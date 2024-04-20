@@ -46,7 +46,9 @@ Our main conclusion emphasizes that bias can arise not only from models but also
 We've conducted several user studies to enhance our project's deliverables.
 - Yichen Zhang: "There can be a place on the website for the user to put in features on a new person and have the website generate predicted income (or the likelihood of an outcome) using the model. 
 It can also support having different models (Logistic Regression, Random Forest, …) so that the users have a choice."
-- Holly Wang: "The team can make the website more interactive, and maybe allowing users to upload their own dataset and use the visualization tools provided"
+- Holly Wang: "The team can make the website more interactive, and maybe allowing users to upload their own dataset and use the visualization tools provided, as well as leaving an option for the user to export their visualizations as a PDF or other file type."
+
+In response to the feedback received, we've introduced a User Input Prediction page where users can input their information and choose a model for prediction.
 
 
 
