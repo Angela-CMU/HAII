@@ -239,52 +239,70 @@ def get_user_inp(model, original_X):
     #    st.dataframe(user_inp_data)
     return user_inp_data
    
-def main():
+def main(): 
     for k in ['scaler', 'enc', 'model', 'original_X']:
         if k not in st.session_state:
-            st.session_state[k] = None
+            st.session_state[k] = None   
     
-    select_page = st.sidebar.radio("Select Page:", ["Introduction", "Data analysis", "User input prediction"])
+    # load data
+    X, y = load_data()
+    original_X = X.copy()
 
+    # clean data
+    y_series = y['income'].str.replace('.', '')
+    y_series.value_counts()
+    df = pd.concat([X, y_series], axis=1, sort=False)
+
+    # select features to be trained
     features_cat = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
     features_num = ['age', 'fnlwgt', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
 
+    # select page in the left side of webpage    
+    select_page = st.sidebar.radio("Select Page:", ["Introduction", "Data analysis", "User input prediction"])
+
     if select_page == "Introduction":
         st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs. With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
+        st.dataframe(X.head())
 
-
-    if select_page == "Data analysis":
-        #Introduction page
-        X, y = load_data()
-        original_X = X.copy()
-        # st.dataframe(X.head())
-        
-        plot_feature_distribution(X)
-        plot_two_feature_distribution(X)
-        y_series = y['income'].str.replace('.', '')
-        y_series.value_counts()
-        df = pd.concat([X, y_series], axis=1, sort=False)
-        df = plot_race_and_income(df)
-
-        scaler, enc, model_full_features = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num)  
+        # build the original model
+        scaler, enc, model = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num)  
         st.session_state['scaler'] = scaler
         st.session_state['enc'] = enc
-        st.session_state['model'] = model_full_features
+        st.session_state['model'] = model
         st.session_state['original_X'] = original_X
 
+    elif select_page == "Data analysis":
+        plot_feature_distribution(X)
+        plot_two_feature_distribution(X)
+        _ = plot_race_and_income(df)
+
     elif select_page == "User input prediction":
-        #User input prediction
         scaler = st.session_state['scaler']
         enc = st.session_state['enc']
-        model_full_features = st.session_state['model']
+        model = st.session_state['model']
         original_X = st.session_state['original_X']
-        X_user = get_user_inp(model_full_features, original_X)
+        X_user = get_user_inp(model, original_X)
 
         X_user_preprocess = preprocessing_data(X_user, enc, scaler, features_cat, features_num)
-        y_user = model_full_features.predict(X_user_preprocess)[0]
+        y_user = model.predict(X_user_preprocess)[0] 
 
-        if st.button('Predict'):
+        if st.button('Predict with original model'):
             st.success(f"Income: {y_user}")
+        
+        if st.button('Predict with model without considering sex'):
+            features_cat_without_sex = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'native-country']
+            scaler_without_sex, enc_without_sex, model_without_sex = build_model(df.drop(columns=['income']), df['income'], features_cat_without_sex, features_num)
+            X_user_preprocess_without_sex = preprocessing_data(X_user, enc_without_sex, scaler_without_sex, features_cat_without_sex, features_num)
+            y_user_without_sex = model_without_sex.predict(X_user_preprocess_without_sex)[0]
+            st.success(f"Income: {y_user_without_sex}")
+        
+        if st.button('Predict with model without considering race'):
+            features_cat_without_race = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'sex', 'native-country']
+            scaler_without_race, enc_without_race, model_without_race = build_model(df.drop(columns=['income']), df['income'], features_cat_without_race, features_num)
+            X_user_preprocess_without_race = preprocessing_data(X_user, enc_without_race, scaler_without_race, features_cat_without_race, features_num)
+            y_user_without_race = model_without_race.predict(X_user_preprocess_without_race)[0]
+            st.success(f"Income: {y_user_without_race}")
+        
 
 if __name__ == '__main__':
     main()
