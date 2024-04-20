@@ -244,12 +244,16 @@ def main():
         if k not in st.session_state:
             st.session_state[k] = None
     
-    select_page = st.sidebar.radio("Select Page:", ["Introduction", "User input prediction"])
+    select_page = st.sidebar.radio("Select Page:", ["Introduction", "Data analysis", "User input prediction"])
 
     features_cat = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
     features_num = ['age', 'fnlwgt', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
 
     if select_page == "Introduction":
+        st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs. With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
+
+
+    if select_page == "Data analysis":
         #Introduction page
         X, y = load_data()
         original_X = X.copy()
