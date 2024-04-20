@@ -27,49 +27,82 @@ def load_data():
     y = adult.data.targets 
     return X, y
 
-def plot_feature_distribution(X):
+# def plot_feature_distribution(X):
+#     ##### selectbox #####
+#     feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
+#     label_name = ['income']
+#     feature_select = st.selectbox('Feature distribution', feature_names)
+
+#     # Plot distribution of selected feature
+#     if feature_select:
+#         X_feature = X[feature_select]
+#         bin = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+#         fig = plt.figure()
+#         plt.hist(X_feature, bins='auto', color='skyblue', edgecolor='black')
+#         plt.xlabel(feature_select)
+#         plt.ylabel('Frequency')
+#         plt.title(f'{feature_select} Distribution')
+#         plt.xticks(rotation=90, fontsize=8)
+#         plt.tight_layout()
+#         st.pyplot(fig)
+
+# def plot_two_feature_distribution(X):
+#     feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
+#     feature1 = st.selectbox('Select First Feature', feature_names)
+#     feature2 = st.selectbox('Select Second Feature', feature_names)
+#     if feature1 and feature2:
+#         fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+
+#         # Plot distribution of first selected feature
+#         axes[0].hist(X[feature1], bins='auto', color='skyblue', edgecolor='black')
+#         axes[0].set_xlabel(feature1)
+#         axes[0].set_ylabel('Frequency')
+#         axes[0].set_title(f'{feature1} Distribution')
+#         axes[0].tick_params(axis='x', rotation=90, labelsize=8)
+
+#         # Plot distribution of second selected feature
+#         axes[1].hist(X[feature2], bins='auto', color='salmon', edgecolor='black')
+#         axes[1].set_xlabel(feature2)
+#         axes[1].set_ylabel('Frequency')
+#         axes[1].set_title(f'{feature2} Distribution')
+#         axes[1].tick_params(axis='x', rotation=90, labelsize=8)
+
+#         plt.tight_layout()
+#         st.pyplot(fig)
+
+def plot_feature_distribution_combined(df):
     ##### selectbox #####
     feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
-    label_name = ['income']
     feature_select = st.selectbox('Feature distribution', feature_names)
 
     # Plot distribution of selected feature
-    if feature_select:
-        X_feature = X[feature_select]
-        bin = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-        fig = plt.figure()
-        plt.hist(X_feature, bins='auto', color='skyblue', edgecolor='black')
-        plt.xlabel(feature_select)
-        plt.ylabel('Frequency')
-        plt.title(f'{feature_select} Distribution')
-        plt.xticks(rotation=90, fontsize=8)
-        plt.tight_layout()
-        st.pyplot(fig)
-
-def plot_two_feature_distribution(X):
-    feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
-    feature1 = st.selectbox('Select First Feature', feature_names)
-    feature2 = st.selectbox('Select Second Feature', feature_names)
-    if feature1 and feature2:
-        fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-
-        # Plot distribution of first selected feature
-        axes[0].hist(X[feature1], bins='auto', color='skyblue', edgecolor='black')
-        axes[0].set_xlabel(feature1)
-        axes[0].set_ylabel('Frequency')
-        axes[0].set_title(f'{feature1} Distribution')
-        axes[0].tick_params(axis='x', rotation=90, labelsize=8)
-
-        # Plot distribution of second selected feature
-        axes[1].hist(X[feature2], bins='auto', color='salmon', edgecolor='black')
-        axes[1].set_xlabel(feature2)
-        axes[1].set_ylabel('Frequency')
-        axes[1].set_title(f'{feature2} Distribution')
-        axes[1].tick_params(axis='x', rotation=90, labelsize=8)
-
-        plt.tight_layout()
-        st.pyplot(fig)
-
+    if feature_select == 'age':
+        # Bar Chart
+        # feature_value_counts = df[feature_select].value_counts()
+        # feature_df = pd.DataFrame({feature_select: feature_value_counts.index, 'Count': feature_value_counts.values})
+        feature_bar_chart = alt.Chart(df).mark_bar().encode(
+            alt.X(feature_select+':Q', bin=True),
+            y='count()',
+        ).properties(
+            width=500,
+            height=500,
+            title='Bar Chart: ' + feature_select + ' distribution'
+        )
+        feature_bar_chart
+    elif feature_select:
+        # Pie Chart
+        feature_value_counts = df[feature_select].value_counts()
+        feature_df = pd.DataFrame({feature_select: feature_value_counts.index, 'Count': feature_value_counts.values})
+        feature_pie_chart = alt.Chart(feature_df).mark_arc(outerRadius=150).encode(
+            color=feature_select+':N',
+            theta='Count:Q',
+            tooltip=[feature_select, 'Count']
+        ).properties(
+            width=600,
+            height=600,
+            title='Pie Chart: ' + feature_select + ' distribution'
+        )
+        feature_pie_chart
 
 # models
 def build_encoder(X_train, features_cat, features_num):
@@ -161,68 +194,68 @@ def build_model(X, y, features_cat, features_num, model_type, print_report=False
     
     return scaler, enc, model
 
-def plot_race_and_income(df):
-    #Sex Pie Chart
-    sex_value_counts = df['sex'].value_counts()
-    sex_df = pd.DataFrame({'sex': sex_value_counts.index, 'Count': sex_value_counts.values})
-    sex_pie_chart = alt.Chart(sex_df).mark_arc().encode(
-        color='sex:N',
-        theta='Count:Q',
-        tooltip=['sex', 'Count']
-    ).properties(
-        width=400,
-        height=400,
-        title='Pie Chart: Gender Distribution'
-    )
-    sex_pie_chart
+# def plot_race_and_income(df):
+#     #Sex Pie Chart
+#     sex_value_counts = df['sex'].value_counts()
+#     sex_df = pd.DataFrame({'sex': sex_value_counts.index, 'Count': sex_value_counts.values})
+#     sex_pie_chart = alt.Chart(sex_df).mark_arc().encode(
+#         color='sex:N',
+#         theta='Count:Q',
+#         tooltip=['sex', 'Count']
+#     ).properties(
+#         width=400,
+#         height=400,
+#         title='Pie Chart: Gender Distribution'
+#     )
+#     sex_pie_chart
 
-    #Race Pie Chart
-    race_value_counts = df['race'].value_counts()
-    race_df = pd.DataFrame({'race': race_value_counts.index, 'Count': race_value_counts.values})
-    race_pie_chart = alt.Chart(race_df).mark_arc().encode(
-        color='race:N',
-        theta='Count:Q',
-        tooltip=['race', 'Count']
-    ).properties(
-        width=400,
-        height=400,
-        title='Pie Chart: Race Distribution'
-    )
-    race_pie_chart
+#     #Race Pie Chart
+#     race_value_counts = df['race'].value_counts()
+#     race_df = pd.DataFrame({'race': race_value_counts.index, 'Count': race_value_counts.values})
+#     race_pie_chart = alt.Chart(race_df).mark_arc().encode(
+#         color='race:N',
+#         theta='Count:Q',
+#         tooltip=['race', 'Count']
+#     ).properties(
+#         width=400,
+#         height=400,
+#         title='Pie Chart: Race Distribution'
+#     )
+#     race_pie_chart
 
-    #Filters
-    age_filter=st.sidebar.slider('Age:',min_value=min(df['age']),max_value=max(df['age']),value=(min(df['age']),max(df['age'])))
-    df = df[(df["age"] >= age_filter[0]) & (df["age"] <= age_filter[1])]
+#     #Filters
+#     age_filter=st.sidebar.slider('Age:',min_value=min(df['age']),max_value=max(df['age']),value=(min(df['age']),max(df['age'])))
+#     df = df[(df["age"] >= age_filter[0]) & (df["age"] <= age_filter[1])]
 
-    sex_filter = st.sidebar.selectbox('Gender:',df['sex'].unique())
-    df = df[df['sex'] == sex_filter]
+#     sex_filter = st.sidebar.selectbox('Gender:',df['sex'].unique())
+#     df = df[df['sex'] == sex_filter]
 
-    workclass_filter=st.sidebar.multiselect('Work class:',df['workclass'].unique())
-    if len(workclass_filter) != 0:
-       df = df[(df['workclass'].isin(workclass_filter))]
+#     workclass_filter=st.sidebar.multiselect('Work class:',df['workclass'].unique())
+#     if len(workclass_filter) != 0:
+#        df = df[(df['workclass'].isin(workclass_filter))]
 
-    martial_status_filter=st.sidebar.multiselect('Martial status:',df['martial-status'].unique())
-    if len(martial_status_filter) != 0:
-        df = df[(df['martial-status'].isin(martial_status_filter))]
+#     martial_status_filter=st.sidebar.multiselect('Martial status:',df['martial-status'].unique())
+#     if len(martial_status_filter) != 0:
+#         df = df[(df['martial-status'].isin(martial_status_filter))]
 
-    race_filter=st.sidebar.multiselect('Race:',df['race'].unique())
-    if len(race_filter) != 0:
-        df = df[(df['race'].isin(race_filter))]
+#     race_filter=st.sidebar.multiselect('Race:',df['race'].unique())
+#     if len(race_filter) != 0:
+#         df = df[(df['race'].isin(race_filter))]
 
-    st.subheader("Analyzing fairness in income")
-    bar_race_income = alt.Chart(df).mark_bar().encode(
-        x='race:N',
-        y='count():Q',
-        color='income:N'
-    ).properties(
-        width=800,
-        height=600
-    ).configure_axisX(
-        labelAngle=-90
-    )
-    bar_race_income
+#     st.subheader("Analyzing fairness in income")
+#     bar_race_income = alt.Chart(df).mark_bar().encode(
+#         x='race:N',
+#         y='count():Q',
+#         color='income:N'
+#     ).properties(
+#         width=800,
+#         height=600
+#     ).configure_axisX(
+#         labelAngle=-90
+#     )
+#     bar_race_income
 
-    return df
+#     return df
 
 def get_user_inp(original_X):
     # Get User Input
@@ -278,9 +311,10 @@ def main():
         st.markdown("You can access the Data Analysis page or the User Input Prediction page via the selection bar located on the left side.")
 
     elif select_page == "Data analysis":
-        plot_feature_distribution(X)
-        plot_two_feature_distribution(X)
-        _ = plot_race_and_income(df)
+        # plot_feature_distribution(X)
+        # plot_two_feature_distribution(X)
+        # _ = plot_race_and_income(df)
+        plot_feature_distribution_combined(df)
 
         ##### selectbox #####
         model_types = ['Logistic Regression', 'Random Forest']
