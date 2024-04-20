@@ -104,6 +104,53 @@ def plot_feature_distribution_combined(df):
         )
         feature_pie_chart
 
+def plot_feature_vs_income(df):
+    ##### selectbox #####
+    feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
+    feature_select = st.selectbox('Feature distribution', feature_names, key='ratio')
+
+    # Plot distribution of selected feature
+    if feature_select == 'race' or 'sex':
+        # Bar Chart
+
+        # df_income_larger_50k = df[df['income'] == '>50K']
+
+        # feature_value_counts = df[feature_select].value_counts()
+        # feature_value_counts_with_index = pd.concat([feature_value_counts, feature_value_counts.index], axis=1)
+        # st.dataframe(feature_value_counts_with_index)
+        # feature_value_counts_larger_than_50k_dict = df_income_larger_50k[feature_select].value_counts().to_dict()
+        # st.write(feature_value_counts_larger_than_50k_dict)
+        # feature_income_ratio = feature_value_counts_with_index.apply(lambda x: feature_value_counts_larger_than_50k_dict.get(x.index, 0) / x.values)
+        # st.dataframe(feature_income_ratio)
+        
+
+
+        df_income_larger_50k = df[df['income'] == '>50K']
+
+        feature_value_counts = df[feature_select].value_counts()
+        feature_value_counts_larger_than_50k = df_income_larger_50k[feature_select].value_counts().rename("count_larger_50k")
+        feature_value_counts_concat = pd.concat([feature_value_counts, feature_value_counts_larger_than_50k], axis=1).fillna(0)
+
+        # st.dataframe(feature_value_counts_concat)
+        # st.write(type(feature_value_counts_concat))
+
+        feature_value_counts_concat['feature_income_ratio'] = (feature_value_counts_concat['count_larger_50k'] / feature_value_counts_concat['count']) * 100
+
+        # feature_income_ratio = feature_value_counts_concat.apply(lambda x: x.count_larger_50k / x.count * 100)
+        # st.dataframe(feature_income_ratio)
+
+        st.write(feature_value_counts_concat.index)
+
+        feature_bar_chart = alt.Chart(feature_value_counts_concat).mark_bar().encode(
+            x='index:N',
+            y='feature_income_ratio:Q',
+        ).properties(
+            width=500,
+            height=500,
+            title='Bar Chart: ' + feature_select + ' distribution'
+        )
+        feature_bar_chart
+
 # models
 def build_encoder(X_train, features_cat, features_num):
     X_cat = X_train[features_cat]
@@ -325,6 +372,8 @@ def main():
             st.markdown("Building the model with the data sets...")
             _, _, _ = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, model_select, print_report=True)
             st.markdown("Completed!")
+
+        plot_feature_vs_income(df)
         
     elif select_page == "User input prediction":
         ##### selectbox #####
