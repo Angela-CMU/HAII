@@ -227,7 +227,7 @@ def get_user_inp(original_X):
     user_data_point = {
         'age' : st.sidebar.number_input('Age:',min_value=min(original_X['age']),max_value=max(original_X['age']),value=min(original_X['age'])),
         'workclass' : st.sidebar.selectbox('Workclass:',original_X['workclass'].unique()),
-        'fnlwgt' : st.sidebar.number_input('fnlwgt:',min_value=min(original_X['fnlwgt']),max_value=max(original_X['fnlwgt']),value=min(original_X['fnlwgt'])),
+        # 'fnlwgt' : st.sidebar.number_input('fnlwgt:',min_value=min(original_X['fnlwgt']),max_value=max(original_X['fnlwgt']),value=min(original_X['fnlwgt'])),
         'education' : st.sidebar.selectbox('Education:',sorted(original_X['education'].unique())),
         'education-num' : st.sidebar.selectbox('Education Number:',sorted(original_X['education-num'].unique())),
         'martial-status' : st.sidebar.selectbox('Martial Status:',sorted(original_X['martial-status'].unique())),
@@ -257,7 +257,7 @@ def main():
 
     # select features to be trained
     features_cat = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
-    features_num = ['age', 'fnlwgt', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
+    features_num = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
 
     # select page in the left side of webpage    
     select_page = st.sidebar.radio("Select Page:", ["Introduction", "Data analysis", "User input prediction"])
