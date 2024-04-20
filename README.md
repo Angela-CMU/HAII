@@ -50,5 +50,7 @@ It can also support having different models (Logistic Regression, Random Forest,
 
 In response to the feedback received, we've introduced a User Input Prediction page where users can input their information and choose a model for prediction.
 
+### Lesson learned from lectures
+All members of our team are currently enrolled in the computational data science program at CMU, having strong backgrounds in data science. Prior to taking this course, we were well-versed in the data analysis process. However, we had little awareness of how the data collection, analysis, and model prediction phases could potentially introduce biases and unfairness. It's excited that we've acknowledged the significance of fairness and integrated it into our project. This crucial insight was gained through our participation in the Human AI Interaction course!
 
 
