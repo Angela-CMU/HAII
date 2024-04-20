@@ -29,7 +29,7 @@ def load_data():
 
 def plot_feature_distribution(X):
     ##### selectbox #####
-    feature_names = ['age', 'education', 'marital-status', 'race', 'sex']
+    feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
     label_name = ['income']
     feature_select = st.selectbox('Feature distribution', feature_names)
 
@@ -47,7 +47,7 @@ def plot_feature_distribution(X):
         st.pyplot(fig)
 
 def plot_two_feature_distribution(X):
-    feature_names = ['age', 'education', 'marital-status', 'race', 'sex']
+    feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
     feature1 = st.selectbox('Select First Feature', feature_names)
     feature2 = st.selectbox('Select Second Feature', feature_names)
     if feature1 and feature2:
@@ -192,9 +192,9 @@ def plot_race_and_income(df):
     if len(workclass_filter) != 0:
        df = df[(df['workclass'].isin(workclass_filter))]
 
-    marital_status_filter=st.sidebar.multiselect('Marital status:',df['marital-status'].unique())
-    if len(marital_status_filter) != 0:
-        df = df[(df['marital-status'].isin(marital_status_filter))]
+    martial_status_filter=st.sidebar.multiselect('Martial status:',df['martial-status'].unique())
+    if len(martial_status_filter) != 0:
+        df = df[(df['martial-status'].isin(martial_status_filter))]
 
     race_filter=st.sidebar.multiselect('Race:',df['race'].unique())
     if len(race_filter) != 0:
@@ -225,7 +225,7 @@ def get_user_inp(original_X):
         'fnlwgt' : st.sidebar.number_input('fnlwgt:',min_value=min(original_X['fnlwgt']),max_value=max(original_X['fnlwgt']),value=min(original_X['fnlwgt'])),
         'education' : st.sidebar.selectbox('Education:',sorted(original_X['education'].unique())),
         'education-num' : st.sidebar.selectbox('Education Number:',sorted(original_X['education-num'].unique())),
-        'marital-status' : st.sidebar.selectbox('Marital Status:',sorted(original_X['marital-status'].unique())),
+        'martial-status' : st.sidebar.selectbox('Martial Status:',sorted(original_X['martial-status'].unique())),
         'occupation' : st.sidebar.selectbox('Occupation:',original_X['occupation'].unique()),
         'relationship' : st.sidebar.selectbox('Relationship:',sorted(original_X['relationship'].unique())),
         'race' : st.sidebar.selectbox('Race:',sorted(original_X['race'].unique())),
@@ -242,6 +242,7 @@ def get_user_inp(original_X):
 def main(): 
     # load data
     X, y = load_data()
+    X['martial-status'] = X['marital-status']
     original_X = X.copy()
 
     # clean data
@@ -250,15 +251,22 @@ def main():
     df = pd.concat([X, y_series], axis=1, sort=False)
 
     # select features to be trained
-    features_cat = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
+    features_cat = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
     features_num = ['age', 'fnlwgt', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
 
     # select page in the left side of webpage    
     select_page = st.sidebar.radio("Select Page:", ["Introduction", "Data analysis", "User input prediction"])
 
     if select_page == "Introduction":
-        st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs. With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
+        # st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs. With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
+        url = "https://archive.ics.uci.edu/dataset/2/adult"
+        st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs, which can be found at [UC Irvine Machine Learning Repository](%s)" %url) # "check out this [link](%s)" % url
+        st.markdown("With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
+        
+        st.markdown("To begin, here are a couple of example data for your reference:")
         st.dataframe(X.head())
+
+        st.markdown("You can access the Data Analysis page or the User Input Prediction page via the selection bar located on the left side.")
 
     elif select_page == "Data analysis":
         plot_feature_distribution(X)
@@ -276,14 +284,14 @@ def main():
             st.success(f"Income: {y_user}")
         
         if st.button('Predict with model without considering sex'):
-            features_cat_without_sex = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'native-country']
+            features_cat_without_sex = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'native-country']
             scaler_without_sex, enc_without_sex, model_without_sex = build_model(df.drop(columns=['income']), df['income'], features_cat_without_sex, features_num)
             X_user_preprocess_without_sex = preprocessing_data(X_user, enc_without_sex, scaler_without_sex, features_cat_without_sex, features_num)
             y_user_without_sex = model_without_sex.predict(X_user_preprocess_without_sex)[0]
             st.success(f"Income: {y_user_without_sex}")
         
         if st.button('Predict with model without considering race'):
-            features_cat_without_race = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'sex', 'native-country']
+            features_cat_without_race = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'sex', 'native-country']
             scaler_without_race, enc_without_race, model_without_race = build_model(df.drop(columns=['income']), df['income'], features_cat_without_race, features_num)
             X_user_preprocess_without_race = preprocessing_data(X_user, enc_without_race, scaler_without_race, features_cat_without_race, features_num)
             y_user_without_race = model_without_race.predict(X_user_preprocess_without_race)[0]
