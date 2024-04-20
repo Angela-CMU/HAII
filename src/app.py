@@ -22,32 +22,32 @@ st.write("Team members: Yen-Ju Wu (yenjuw@andrew.cmu.edu) and Chien-Yu Liu (chie
 
 @st.cache_data
 def load_data():
-  # fetch dataset 
-  adult = fetch_ucirepo(id=2) 
-    
-  # data (as pandas dataframes) 
-  X = adult.data.features 
-  y = adult.data.targets 
-  return X, y
+    # fetch dataset 
+    adult = fetch_ucirepo(id=2) 
+        
+    # data (as pandas dataframes) 
+    X = adult.data.features 
+    y = adult.data.targets 
+    return X, y
 
 def plot_feature_distribution(X):
-  ##### selectbox #####
-  feature_names = ['age', 'education', 'marital-status', 'race', 'sex']
-  label_name = ['income']
-  feature_select = st.selectbox('Feature distribution', feature_names)
+    ##### selectbox #####
+    feature_names = ['age', 'education', 'marital-status', 'race', 'sex']
+    label_name = ['income']
+    feature_select = st.selectbox('Feature distribution', feature_names)
 
-  # Plot distribution of selected feature
-  if feature_select:
-    X_feature = X[feature_select]
-    bin = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    fig = plt.figure()
-    plt.hist(X_feature, bins='auto', color='skyblue', edgecolor='black')
-    plt.xlabel(feature_select)
-    plt.ylabel('Frequency')
-    plt.title(f'{feature_select} Distribution')
-    plt.xticks(rotation=90, fontsize=8)
-    plt.tight_layout()
-    st.pyplot(fig)
+    # Plot distribution of selected feature
+    if feature_select:
+        X_feature = X[feature_select]
+        bin = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        fig = plt.figure()
+        plt.hist(X_feature, bins='auto', color='skyblue', edgecolor='black')
+        plt.xlabel(feature_select)
+        plt.ylabel('Frequency')
+        plt.title(f'{feature_select} Distribution')
+        plt.xticks(rotation=90, fontsize=8)
+        plt.tight_layout()
+        st.pyplot(fig)
 
 def plot_two_feature_distribution(X):
     feature_names = ['age', 'education', 'marital-status', 'race', 'sex']
@@ -222,28 +222,28 @@ def plot_race_and_income(df):
     return df
 
 def get_user_inp(model, original_X):
-   # Get User Input
-   st.subheader("User Input Prediction:")
+    # Get User Input
+    st.subheader("User Input Prediction:")
 
-   user_data_point = {
-      'age' : st.sidebar.number_input('Age:',min_value=min(original_X['age']),max_value=max(original_X['age']),value=min(original_X['age'])),
-      'workclass' : st.sidebar.selectbox('Workclass:',original_X['workclass'].unique()),
-      'fnlwgt' : st.sidebar.number_input('fnlwgt:',min_value=min(original_X['fnlwgt']),max_value=max(original_X['fnlwgt']),value=min(original_X['fnlwgt'])),
-      'education' : st.sidebar.selectbox('Education:',sorted(original_X['education'].unique())),
-      'education-num' : st.sidebar.selectbox('Education Number:',sorted(original_X['education-num'].unique())),
-      'marital-status' : st.sidebar.selectbox('Marital Status:',sorted(original_X['marital-status'].unique())),
-      'occupation' : st.sidebar.selectbox('Occupation:',original_X['occupation'].unique()),
-      'relationship' : st.sidebar.selectbox('Relationship:',sorted(original_X['relationship'].unique())),
-      'race' : st.sidebar.selectbox('Race:',sorted(original_X['race'].unique())),
-      'sex' : st.sidebar.selectbox('Gender:', original_X['sex'].unique()),
-      'capital-gain' : st.sidebar.number_input('Capital-gain:',min_value=min(original_X['capital-gain']),max_value=max(original_X['capital-gain']),value=min(original_X['capital-gain'])),
-      'capital-loss' : st.sidebar.number_input('Capital-loss:',min_value=min(original_X['capital-loss']),max_value=max(original_X['capital-loss']),value=min(original_X['capital-loss'])),
-      'hours-per-week' : st.sidebar.number_input('Hours-per-week:',min_value=min(original_X['hours-per-week']),max_value=max(original_X['hours-per-week']),value=min(original_X['hours-per-week'])),
-      'native-country' : st.sidebar.selectbox('Native-country:',original_X['native-country'].unique())
-   }
-   user_inp_data = pd.DataFrame([user_data_point], columns=original_X.columns)
-#    st.dataframe(user_inp_data)
-   return user_inp_data
+    user_data_point = {
+        'age' : st.sidebar.number_input('Age:',min_value=min(original_X['age']),max_value=max(original_X['age']),value=min(original_X['age'])),
+        'workclass' : st.sidebar.selectbox('Workclass:',original_X['workclass'].unique()),
+        'fnlwgt' : st.sidebar.number_input('fnlwgt:',min_value=min(original_X['fnlwgt']),max_value=max(original_X['fnlwgt']),value=min(original_X['fnlwgt'])),
+        'education' : st.sidebar.selectbox('Education:',sorted(original_X['education'].unique())),
+        'education-num' : st.sidebar.selectbox('Education Number:',sorted(original_X['education-num'].unique())),
+        'marital-status' : st.sidebar.selectbox('Marital Status:',sorted(original_X['marital-status'].unique())),
+        'occupation' : st.sidebar.selectbox('Occupation:',original_X['occupation'].unique()),
+        'relationship' : st.sidebar.selectbox('Relationship:',sorted(original_X['relationship'].unique())),
+        'race' : st.sidebar.selectbox('Race:',sorted(original_X['race'].unique())),
+        'sex' : st.sidebar.selectbox('Gender:', original_X['sex'].unique()),
+        'capital-gain' : st.sidebar.number_input('Capital-gain:',min_value=min(original_X['capital-gain']),max_value=max(original_X['capital-gain']),value=min(original_X['capital-gain'])),
+        'capital-loss' : st.sidebar.number_input('Capital-loss:',min_value=min(original_X['capital-loss']),max_value=max(original_X['capital-loss']),value=min(original_X['capital-loss'])),
+        'hours-per-week' : st.sidebar.number_input('Hours-per-week:',min_value=min(original_X['hours-per-week']),max_value=max(original_X['hours-per-week']),value=min(original_X['hours-per-week'])),
+        'native-country' : st.sidebar.selectbox('Native-country:',original_X['native-country'].unique())
+    }
+    user_inp_data = pd.DataFrame([user_data_point], columns=original_X.columns)
+    #    st.dataframe(user_inp_data)
+    return user_inp_data
    
 def main():
     for k in ['scaler', 'enc', 'model', 'original_X']:
@@ -286,4 +286,4 @@ def main():
             st.success(f"Income: {y_user}")
 
 if __name__ == '__main__':
-  main()
+    main()
