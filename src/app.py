@@ -309,8 +309,6 @@ def build_model(X, y, features_cat, features_num, model_type, print_report=False
 
 def get_user_inp(original_X):
     # Get User Input
-    st.subheader("User Input Prediction:")
-
     user_data_point = {
         'age' : st.sidebar.number_input('Age:',min_value=min(original_X['age']),max_value=max(original_X['age']),value=min(original_X['age'])),
         'workclass' : st.sidebar.selectbox('Workclass:',original_X['workclass'].unique()),
@@ -347,14 +345,17 @@ def main():
     features_num = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
 
     # select page in the left side of webpage    
-    select_page = st.sidebar.radio("Select Page:", ["Introduction", "Data analysis", "Fairness analysis", "User input prediction"])
+    select_page = st.sidebar.radio("Select Page:", ["Introduction", "Data analysis", "Model Training", "Fairness analysis", "User input prediction"])
 
     if select_page == "Introduction":
         # st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs. With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
+        
+        st.subheader("Source of Our Datasets")
         url = "https://archive.ics.uci.edu/dataset/2/adult"
         st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs, which can be found at [UC Irvine Machine Learning Repository](%s)" %url) # "check out this [link](%s)" % url
         st.markdown("With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
         
+        st.subheader("Datasets")
         st.markdown("To begin, here are a couple of example data for your reference:")
         st.dataframe(X.head())
 
@@ -364,8 +365,17 @@ def main():
         # plot_feature_distribution(X)
         # plot_two_feature_distribution(X)
         # _ = plot_race_and_income(df)
+        st.subheader("Distribution of features in the dataset")
+        st.markdown("Please select the feature you would like to visualize the distribution of")
         plot_feature_distribution_combined(df)
 
+    elif select_page == "Model Training":    
+        st.subheader("Types of Models for Dataset Training")
+        st.markdown("Please select the machine learning model you wish to train with the datasets")
+        st.markdown("Please note that we have balanced the data distribution by upsampling the data where income='>50k' to match the number of data points where income='<50k'.")
+        st.markdown("The following are our selected features for training and testing the model:")
+        st.markdown("Categorical features includes: 'workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', and 'native-country'")
+        st.markdown("Numerical features includes: 'age', 'education-num', 'capital-gain', 'capital-loss', and 'hours-per-week'")
         ##### selectbox #####
         model_types = ['Logistic Regression', 'Random Forest']
         model_select = st.selectbox('Model Types', model_types)
@@ -377,9 +387,16 @@ def main():
             st.markdown("Completed!")
 
     elif select_page == "Fairness analysis":
+        st.subheader("Fairness Analysis")
+        st.markdown("Please select the feature to visualize its distribution with respect to income")
+        st.markdown("The following figure displays the percentage of each category with an income >50k")
         plot_feature_vs_income(df)
 
     elif select_page == "User input prediction":
+        st.subheader("User Input Prediction")
+        st.markdown("Please select the machine learning model you wish to train with the datasets")
+        st.markdown("Please input the user data to be used as input for predicting with the models on the left side of the page.")
+        st.markdown("In this section, we'll construct three models based on the model type you've chosen. Each model will have a different feature set: one using all features, one using all features except sex, and one using all features except race. This comparison will help us assess whether the model's predictions differ, indicating potential bias towards sex or race.")
         ##### selectbox #####
         model_types = ['Logistic Regression', 'Random Forest']
         model_select = st.selectbox('Model Types', model_types)
