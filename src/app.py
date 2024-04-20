@@ -131,15 +131,17 @@ def metrics(y_true, y_pred):
     st.write('Classification report: \n')
     st.write(report_df.reset_index().rename(columns={'index': 'Report'}))
 
-def train_model(X_train, X_test, y_train, y_test):
+def train_model(X_train, X_test, y_train, y_test, print_report):
     # model = LogisticRegression(solver='lbfgs').fit(X_train, y_train) # first fit (train) the model
     model = RandomForestClassifier().fit(X_train, y_train) # first fit (train) the model
-    y_pred = model.predict(X_test) # next get the model's predictions for a sample in the validation set
-    metrics(y_test, y_pred) # finally evaluate performance
+
+    if print_report:
+        y_pred = model.predict(X_test) # next get the model's predictions for a sample in the validation set
+        metrics(y_test, y_pred) # finally evaluate performance
 
     return model
 
-def build_model(X, y, features_cat, features_num):
+def build_model(X, y, features_cat, features_num, print_report=False):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=1) # split out into training 70% of our data
     enc, scaler = build_encoder(X_train, features_cat, features_num)
     
@@ -153,7 +155,7 @@ def build_model(X, y, features_cat, features_num):
     X_train_up_preprocessed = preprocessing_data(X_train_up, enc, scaler, features_cat, features_num)
     X_test_preprocessed = preprocessing_data(X_test, enc, scaler, features_cat, features_num)
 
-    model = train_model(X_train_up_preprocessed, X_test_preprocessed, y_train_up.reset_index(drop=True), y_test.reset_index(drop=True))
+    model = train_model(X_train_up_preprocessed, X_test_preprocessed, y_train_up.reset_index(drop=True), y_test.reset_index(drop=True), print_report)
     
     return scaler, enc, model
 
@@ -278,6 +280,11 @@ def main():
         plot_two_feature_distribution(X)
         _ = plot_race_and_income(df)
 
+        # build the original model
+        st.markdown("Building the model with the data sets...")
+        _, _, _ = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, print_report=True)
+        st.markdown("Completed!")
+        
     elif select_page == "User input prediction":
         X_user = get_user_inp(original_X)
 
