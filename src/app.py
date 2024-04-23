@@ -2,7 +2,6 @@ import streamlit as st
 import altair as alt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from ucimlrepo import fetch_ucirepo 
 import sklearn # import scikit-learn
 from sklearn import preprocessing # import preprocessing utilites
