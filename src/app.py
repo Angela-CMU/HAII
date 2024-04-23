@@ -241,7 +241,7 @@ def main():
     # select features to be trained
     # features_cat = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
     # features_num = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
-    features_cat = ['education', 'martial-status', 'race', 'sex', 'native-country']
+    features_cat = ['workclass', 'education', 'martial-status', 'race', 'sex', 'native-country']
     features_num = ['age', 'education-num', 'hours-per-week']
 
     # select page in the left side of webpage    
@@ -316,7 +316,7 @@ def main():
             
             if st.button('Predict with model without considering sex'):
                 # features_cat_without_sex = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'native-country']
-                features_cat_without_sex = ['education', 'martial-status', 'race', 'native-country']
+                features_cat_without_sex = ['workclass', 'education', 'martial-status', 'race', 'native-country']
                 scaler_without_sex, enc_without_sex, model_without_sex = build_model(df.drop(columns=['income']), df['income'], features_cat_without_sex, features_num, model_select)
                 X_user_preprocess_without_sex = preprocessing_data(X_user, enc_without_sex, scaler_without_sex, features_cat_without_sex, features_num)
                 y_user_without_sex = model_without_sex.predict(X_user_preprocess_without_sex)[0]
@@ -324,7 +324,7 @@ def main():
             
             if st.button('Predict with model without considering race'):
                 # features_cat_without_race = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'sex', 'native-country']
-                features_cat_without_race = ['education', 'martial-status', 'sex']
+                features_cat_without_race = ['workclass', 'education', 'martial-status', 'sex']
                 scaler_without_race, enc_without_race, model_without_race = build_model(df.drop(columns=['income']), df['income'], features_cat_without_race, features_num, model_select)
                 X_user_preprocess_without_race = preprocessing_data(X_user, enc_without_race, scaler_without_race, features_cat_without_race, features_num)
                 y_user_without_race = model_without_race.predict(X_user_preprocess_without_race)[0]
