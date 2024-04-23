@@ -31,7 +31,7 @@ All the functionalities mentioned above offer a highly interactive experience.
 
 
 ## Access our website
-We've launched our website for users to explore! Feel free to visit the website we've crafted [here]().
+We've launched our website for users to explore! Feel free to visit the website we've crafted [here](https://haii-fairpay.streamlit.app/).
 
 
 ## Building and testing locally
