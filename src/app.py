@@ -277,8 +277,8 @@ def main():
         st.markdown("Please select the machine learning model you wish to train with the datasets")
         st.markdown("Please note that we have balanced the data distribution by upsampling the data where income='>50k' to match the number of data points where income='<50k'.")
         st.markdown("The following are our selected features for training and testing the model:")
-        st.markdown("Categorical features includes: 'workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', and 'native-country'")
-        st.markdown("Numerical features includes: 'age', 'education-num', 'capital-gain', 'capital-loss', and 'hours-per-week'")
+        st.markdown("Categorical features includes: 'workclass', 'education', 'martial-status', 'race', 'sex', and 'native-country'")
+        st.markdown("Numerical features includes: 'age', 'education-num', and 'hours-per-week'")
         ##### selectbox #####
         model_types = ['Logistic Regression', 'Random Forest']
         model_select = st.selectbox('Model Types', model_types)
@@ -286,6 +286,7 @@ def main():
         # Plot distribution of selected feature
         if model_select:
             st.markdown("Building the model with the data sets...")
+            st.markdown("Here are the results:")
             _, _, _ = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, model_select, print_report=True)
             st.markdown("Completed!")
 
@@ -322,7 +323,7 @@ def main():
                 y_user_without_sex = model_without_sex.predict(X_user_preprocess_without_sex)[0]
                 st.success(f"Income: {y_user_without_sex}")
             
-            if st.button('Predict with model without considering race'):
+            if st.button('Predict with model without considering race and native-country'):
                 # features_cat_without_race = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'sex', 'native-country']
                 features_cat_without_race = ['workclass', 'education', 'martial-status', 'sex']
                 scaler_without_race, enc_without_race, model_without_race = build_model(df.drop(columns=['income']), df['income'], features_cat_without_race, features_num, model_select)
