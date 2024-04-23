@@ -13,9 +13,13 @@ from sklearn.metrics import classification_report
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
+st.set_page_config(
+    page_title="FairPay",
+    layout="wide"
+)
 
 st.header("FairPay: Empowering Fairness in Interactive Income Analysis")
-st.write("Team members: Yen-Ju Wu (yenjuw@andrew.cmu.edu) and Chien-Yu Liu (chienyul@andrew.cmu.edu) and Jyoshna Sarva (jsarva@andrew.cmu.edu)")
+st.write("Team members: *Yen-Ju Wu* (yenjuw@andrew.cmu.edu), *Chien-Yu Liu* (chienyul@andrew.cmu.edu) and *Jyoshna Sarva* (jsarva@andrew.cmu.edu)")
 
 @st.cache_data
 def load_data():
@@ -73,7 +77,8 @@ def load_data():
 def plot_feature_distribution_combined(df):
     ##### selectbox #####
     feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
-    feature_select = st.selectbox('Feature distribution', feature_names)
+    st.markdown("<h5><b>Feature distribution</b></h5>", unsafe_allow_html=True)
+    feature_select = st.selectbox("", feature_names)
 
     # Plot distribution of selected feature
     if feature_select == 'age':
@@ -107,7 +112,8 @@ def plot_feature_distribution_combined(df):
 def plot_feature_vs_income(df):
     ##### selectbox #####
     feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
-    feature_select = st.selectbox('Feature distribution', feature_names, key='ratio')
+    st.markdown("<h5><b>Feature distribution</b></h5>", unsafe_allow_html=True)
+    feature_select = st.selectbox("", feature_names, key='ratio')
 
     # Plot distribution of selected feature
     if feature_select == 'age':
@@ -206,12 +212,12 @@ def upsample(X_train, y_train):
 
 # helper method to print basic model metrics
 def metrics(y_true, y_pred):
-    st.write('Confusion matrix:\n', confusion_matrix(y_true, y_pred))
+    st.write('<h5><b>Confusion matrix:\n</b></h5>', confusion_matrix(y_true, y_pred), unsafe_allow_html=True)
 
     report = classification_report(y_true, y_pred, digits=4, output_dict=True)
     report_df = pd.DataFrame(report).transpose()
 
-    st.write('Classification report: \n')
+    st.write('<h5><b>Classification report: \n</b></h5>', unsafe_allow_html=True)
     st.write(report_df.reset_index().rename(columns={'index': 'Report'}))
 
 def train_model(X_train, X_test, y_train, y_test, model_type, print_report):
@@ -345,18 +351,20 @@ def main():
     features_num = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
 
     # select page in the left side of webpage    
-    select_page = st.sidebar.radio("Select Page:", ["Introduction", "Data analysis", "Model Training", "Fairness analysis", "User input prediction"])
+    select_page = st.sidebar.radio('**Index:**', ["Introduction", "Data analysis", "Model Training", "Fairness analysis", "User input prediction"])
 
     if select_page == "Introduction":
         # st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs. With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
-        
+        st.image('introduction_image.jpeg')
+        st.markdown("Image Source: [Link](https://www.tal.sg/tafep/-/media/TAL/Tafep/Resources/Articles/Images/2021/Fair-Wage.jpg)")
+
         st.subheader("Source of Our Datasets")
         url = "https://archive.ics.uci.edu/dataset/2/adult"
         st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs, which can be found at [UC Irvine Machine Learning Repository](%s)" %url) # "check out this [link](%s)" % url
         st.markdown("With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
         
         st.subheader("Datasets")
-        st.markdown("To begin, here are a couple of example data for your reference:")
+        st.markdown("**To begin, here are a couple of example data for your reference:**")
         st.dataframe(X.head())
 
         st.markdown("You can access the Data Analysis page or the User Input Prediction page via the selection bar located on the left side.")
@@ -371,59 +379,85 @@ def main():
 
     elif select_page == "Model Training":    
         st.subheader("Types of Models for Dataset Training")
-        st.markdown("Please select the machine learning model you wish to train with the datasets")
-        st.markdown("Please note that we have balanced the data distribution by upsampling the data where income='>50k' to match the number of data points where income='<50k'.")
-        st.markdown("The following are our selected features for training and testing the model:")
-        st.markdown("Categorical features includes: 'workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', and 'native-country'")
-        st.markdown("Numerical features includes: 'age', 'education-num', 'capital-gain', 'capital-loss', and 'hours-per-week'")
+        st.image('machine_learning.png')
+        st.markdown("Image Source: [Link](https://emeritus.org/in/wp-content/uploads/sites/3/2023/01/What-is-machine-learning-Definition-types.jpg.optimal.jpg)")
+        
+        st.markdown("""Please select the machine learning model you wish to train with the datasets.
+                    Please note that we have balanced the data distribution by upsampling the data where income='>50k' to match the number of data points where income='<50k'.""")
+        st.markdown("<b>The following are our selected features for training and testing the model:</b>", unsafe_allow_html=True)
+        st.markdown("**Categorical features includes:** 'workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', and 'native-country'")
+        st.markdown("**Numerical features includes:** 'age', 'education-num', 'capital-gain', 'capital-loss', and 'hours-per-week'")
         ##### selectbox #####
         model_types = ['Logistic Regression', 'Random Forest']
-        model_select = st.selectbox('Model Types', model_types)
+        st.markdown("<h4><b>Select a model:</b></h4>", unsafe_allow_html=True)
+        model_select = st.selectbox("", model_types, index=0)
+        # model_select = st.selectbox('Select a model:', model_types)
+        # model_select = st.selectbox("**Select a model:**", model_types, index=0)
 
         # Plot distribution of selected feature
         if model_select:
             st.markdown("Building the model with the data sets...")
             _, _, _ = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, model_select, print_report=True)
-            st.markdown("Completed!")
+            # st.markdown("Completed!")
 
     elif select_page == "Fairness analysis":
         st.subheader("Fairness Analysis")
-        st.markdown("Please select the feature to visualize its distribution with respect to income")
+        st.markdown("Please select the feature to visualize its distribution with respect to income", unsafe_allow_html=True)
         st.markdown("The following figure displays the percentage of each category with an income >50k")
         plot_feature_vs_income(df)
 
     elif select_page == "User input prediction":
+        st.image('human_ai_interaction.jpeg')
+        st.markdown("Image Source: [Link](https://media.licdn.com/dms/image/D5612AQESmFKqdwyoRw/article-cover_image-shrink_720_1280/0/1685502582544?e=2147483647&v=beta&t=FLScIzP0WvFPT9jEcRU89jrGW8zewd5Q2H_Sno8ITYE)")
         st.subheader("User Input Prediction")
-        st.markdown("Please select the machine learning model you wish to train with the datasets")
-        st.markdown("Please input the user data to be used as input for predicting with the models on the left side of the page.")
+        st.markdown("Please select the machine learning model you wish to train with the datasets. Please input the user data to be used as input for predicting with the models on the left side of the page.")
         st.markdown("In this section, we'll construct three models based on the model type you've chosen. Each model will have a different feature set: one using all features, one using all features except sex, and one using all features except race. This comparison will help us assess whether the model's predictions differ, indicating potential bias towards sex or race.")
         ##### selectbox #####
         model_types = ['Logistic Regression', 'Random Forest']
-        model_select = st.selectbox('Model Types', model_types)
+        st.markdown("<h4><b>Model Types</b></h4>", unsafe_allow_html=True)
+        model_select = st.selectbox("", model_types)
+
+        button_val_style = """
+            <style>
+                .styled-text {
+                    background-color: #75F3E2; 
+                    padding: 6px; 
+                    border-radius: 5px;
+                    font-size: 16px; 
+                    border: 2px solid #FF4B4B;
+                }
+            </style>
+        """
 
         if model_select:
             X_user = get_user_inp(original_X)
-
-            if st.button('Predict with original model'):
+            if st.button('Predict Income Using Model', type='primary'):
                 # build the original model
                 scaler, enc, model = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, model_select)
                 X_user_preprocess = preprocessing_data(X_user, enc, scaler, features_cat, features_num)
                 y_user = model.predict(X_user_preprocess)[0] 
-                st.success(f"Income: {y_user}")
+                st.markdown(button_val_style, unsafe_allow_html=True)
+                st.markdown(f'<div class="styled-text">Income: {y_user}</div>', unsafe_allow_html=True)
+                st.write("")
+
             
-            if st.button('Predict with model without considering sex'):
+            if st.button('Predict Income Using Model (excluding sex)', type='primary'):
                 features_cat_without_sex = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'native-country']
                 scaler_without_sex, enc_without_sex, model_without_sex = build_model(df.drop(columns=['income']), df['income'], features_cat_without_sex, features_num, model_select)
                 X_user_preprocess_without_sex = preprocessing_data(X_user, enc_without_sex, scaler_without_sex, features_cat_without_sex, features_num)
                 y_user_without_sex = model_without_sex.predict(X_user_preprocess_without_sex)[0]
-                st.success(f"Income: {y_user_without_sex}")
+                st.markdown(button_val_style, unsafe_allow_html=True)
+                st.markdown(f'<div class="styled-text">Income: {y_user_without_sex}</div>', unsafe_allow_html=True)
+                st.write("")
             
-            if st.button('Predict with model without considering race'):
+            if st.button('Predict Income Using Model (excluding race)', type='primary'):
                 features_cat_without_race = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'sex', 'native-country']
                 scaler_without_race, enc_without_race, model_without_race = build_model(df.drop(columns=['income']), df['income'], features_cat_without_race, features_num, model_select)
                 X_user_preprocess_without_race = preprocessing_data(X_user, enc_without_race, scaler_without_race, features_cat_without_race, features_num)
                 y_user_without_race = model_without_race.predict(X_user_preprocess_without_race)[0]
-                st.success(f"Income: {y_user_without_race}")
+                st.markdown(button_val_style, unsafe_allow_html=True)
+                st.markdown(f'<div class="styled-text">Income: {y_user_without_race}</div>', unsafe_allow_html=True)
+                st.write("")
         
 
 if __name__ == '__main__':
