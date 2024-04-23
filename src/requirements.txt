@@ -3,3 +3,4 @@ pandas
 altair
 vega_datasets
 ucimlrepo
+scikit-learn
