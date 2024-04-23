@@ -30,7 +30,8 @@ def load_data():
 
 def plot_feature_distribution_combined(df):
     ##### selectbox #####
-    feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
+    # feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
+    feature_names = ['age', 'workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
     feature_select = st.selectbox('Feature distribution', feature_names)
 
     # Plot distribution of selected feature
