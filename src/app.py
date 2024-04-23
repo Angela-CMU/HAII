@@ -209,7 +209,7 @@ def get_user_inp(original_X):
     # Get User Input
     user_data_point = {
         'age' : st.sidebar.number_input('Age:',min_value=min(original_X['age']),max_value=max(original_X['age']),value=min(original_X['age'])),
-        # 'workclass' : st.sidebar.selectbox('Workclass:',original_X['workclass'].unique()),
+        'workclass' : st.sidebar.selectbox('Workclass:',original_X['workclass'].unique()),
         # 'fnlwgt' : st.sidebar.number_input('fnlwgt:',min_value=min(original_X['fnlwgt']),max_value=max(original_X['fnlwgt']),value=min(original_X['fnlwgt'])),
         'education' : st.sidebar.selectbox('Education:',sorted(original_X['education'].unique())),
         'education-num' : st.sidebar.selectbox('Education Number:',sorted(original_X['education-num'].unique())),
