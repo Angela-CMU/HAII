@@ -7,6 +7,10 @@
 - Jyoshna Sarva (jsarva@andrew.cmu.edu)
 
 
+## Quick Website Overview
+![Overview](images/Readme.gif)
+
+
 ## Project Overview
 Our project utilizes income datasets sourced from various Census surveys and programs, which can be found at [UC Irvine Machine Learning Repository](https://archive.ics.uci.edu/dataset/2/adult). 
 
@@ -28,10 +32,6 @@ All the functionalities mentioned above offer a highly interactive experience.
 
 ## Access our website
 We've launched our website for users to explore! Feel free to visit the website we've crafted [here]().
-
-
-## Website overview
-![Introduction](images/Introduction.gif)
 
 
 ## Building and testing locally
