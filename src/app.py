@@ -2,7 +2,6 @@ import streamlit as st
 import altair as alt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from ucimlrepo import fetch_ucirepo 
 import sklearn # import scikit-learn
 from sklearn import preprocessing # import preprocessing utilites
@@ -31,52 +30,10 @@ def load_data():
     y = adult.data.targets 
     return X, y
 
-# def plot_feature_distribution(X):
-#     ##### selectbox #####
-#     feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
-#     label_name = ['income']
-#     feature_select = st.selectbox('Feature distribution', feature_names)
-
-#     # Plot distribution of selected feature
-#     if feature_select:
-#         X_feature = X[feature_select]
-#         bin = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-#         fig = plt.figure()
-#         plt.hist(X_feature, bins='auto', color='skyblue', edgecolor='black')
-#         plt.xlabel(feature_select)
-#         plt.ylabel('Frequency')
-#         plt.title(f'{feature_select} Distribution')
-#         plt.xticks(rotation=90, fontsize=8)
-#         plt.tight_layout()
-#         st.pyplot(fig)
-
-# def plot_two_feature_distribution(X):
-#     feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
-#     feature1 = st.selectbox('Select First Feature', feature_names)
-#     feature2 = st.selectbox('Select Second Feature', feature_names)
-#     if feature1 and feature2:
-#         fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-
-#         # Plot distribution of first selected feature
-#         axes[0].hist(X[feature1], bins='auto', color='skyblue', edgecolor='black')
-#         axes[0].set_xlabel(feature1)
-#         axes[0].set_ylabel('Frequency')
-#         axes[0].set_title(f'{feature1} Distribution')
-#         axes[0].tick_params(axis='x', rotation=90, labelsize=8)
-
-#         # Plot distribution of second selected feature
-#         axes[1].hist(X[feature2], bins='auto', color='salmon', edgecolor='black')
-#         axes[1].set_xlabel(feature2)
-#         axes[1].set_ylabel('Frequency')
-#         axes[1].set_title(f'{feature2} Distribution')
-#         axes[1].tick_params(axis='x', rotation=90, labelsize=8)
-
-#         plt.tight_layout()
-#         st.pyplot(fig)
 
 def plot_feature_distribution_combined(df):
     ##### selectbox #####
-    feature_names = ['age', 'education', 'martial-status', 'race', 'sex']
+    feature_names = ['age', 'workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
     st.markdown("<h5><b>Feature distribution</b></h5>", unsafe_allow_html=True)
     feature_select = st.selectbox("", feature_names)
 
@@ -250,68 +207,7 @@ def build_model(X, y, features_cat, features_num, model_type, print_report=False
     
     return scaler, enc, model
 
-# def plot_race_and_income(df):
-#     #Sex Pie Chart
-#     sex_value_counts = df['sex'].value_counts()
-#     sex_df = pd.DataFrame({'sex': sex_value_counts.index, 'Count': sex_value_counts.values})
-#     sex_pie_chart = alt.Chart(sex_df).mark_arc().encode(
-#         color='sex:N',
-#         theta='Count:Q',
-#         tooltip=['sex', 'Count']
-#     ).properties(
-#         width=400,
-#         height=400,
-#         title='Pie Chart: Gender Distribution'
-#     )
-#     sex_pie_chart
 
-#     #Race Pie Chart
-#     race_value_counts = df['race'].value_counts()
-#     race_df = pd.DataFrame({'race': race_value_counts.index, 'Count': race_value_counts.values})
-#     race_pie_chart = alt.Chart(race_df).mark_arc().encode(
-#         color='race:N',
-#         theta='Count:Q',
-#         tooltip=['race', 'Count']
-#     ).properties(
-#         width=400,
-#         height=400,
-#         title='Pie Chart: Race Distribution'
-#     )
-#     race_pie_chart
-
-#     #Filters
-#     age_filter=st.sidebar.slider('Age:',min_value=min(df['age']),max_value=max(df['age']),value=(min(df['age']),max(df['age'])))
-#     df = df[(df["age"] >= age_filter[0]) & (df["age"] <= age_filter[1])]
-
-#     sex_filter = st.sidebar.selectbox('Gender:',df['sex'].unique())
-#     df = df[df['sex'] == sex_filter]
-
-#     workclass_filter=st.sidebar.multiselect('Work class:',df['workclass'].unique())
-#     if len(workclass_filter) != 0:
-#        df = df[(df['workclass'].isin(workclass_filter))]
-
-#     martial_status_filter=st.sidebar.multiselect('Martial status:',df['martial-status'].unique())
-#     if len(martial_status_filter) != 0:
-#         df = df[(df['martial-status'].isin(martial_status_filter))]
-
-#     race_filter=st.sidebar.multiselect('Race:',df['race'].unique())
-#     if len(race_filter) != 0:
-#         df = df[(df['race'].isin(race_filter))]
-
-#     st.subheader("Analyzing fairness in income")
-#     bar_race_income = alt.Chart(df).mark_bar().encode(
-#         x='race:N',
-#         y='count():Q',
-#         color='income:N'
-#     ).properties(
-#         width=800,
-#         height=600
-#     ).configure_axisX(
-#         labelAngle=-90
-#     )
-#     bar_race_income
-
-#     return df
 
 def get_user_inp(original_X):
     # Get User Input
@@ -322,12 +218,12 @@ def get_user_inp(original_X):
         'education' : st.sidebar.selectbox('Education:',sorted(original_X['education'].unique())),
         'education-num' : st.sidebar.selectbox('Education Number:',sorted(original_X['education-num'].unique())),
         'martial-status' : st.sidebar.selectbox('Martial Status:',sorted(original_X['martial-status'].unique())),
-        'occupation' : st.sidebar.selectbox('Occupation:',original_X['occupation'].unique()),
-        'relationship' : st.sidebar.selectbox('Relationship:',sorted(original_X['relationship'].unique())),
+        # 'occupation' : st.sidebar.selectbox('Occupation:',original_X['occupation'].unique()),
+        # 'relationship' : st.sidebar.selectbox('Relationship:',sorted(original_X['relationship'].unique())),
         'race' : st.sidebar.selectbox('Race:',sorted(original_X['race'].unique())),
         'sex' : st.sidebar.selectbox('Gender:', original_X['sex'].unique()),
-        'capital-gain' : st.sidebar.number_input('Capital-gain:',min_value=min(original_X['capital-gain']),max_value=max(original_X['capital-gain']),value=min(original_X['capital-gain'])),
-        'capital-loss' : st.sidebar.number_input('Capital-loss:',min_value=min(original_X['capital-loss']),max_value=max(original_X['capital-loss']),value=min(original_X['capital-loss'])),
+        # 'capital-gain' : st.sidebar.number_input('Capital-gain:',min_value=min(original_X['capital-gain']),max_value=max(original_X['capital-gain']),value=min(original_X['capital-gain'])),
+        # 'capital-loss' : st.sidebar.number_input('Capital-loss:',min_value=min(original_X['capital-loss']),max_value=max(original_X['capital-loss']),value=min(original_X['capital-loss'])),
         'hours-per-week' : st.sidebar.number_input('Hours-per-week:',min_value=min(original_X['hours-per-week']),max_value=max(original_X['hours-per-week']),value=min(original_X['hours-per-week'])),
         'native-country' : st.sidebar.selectbox('Native-country:',original_X['native-country'].unique())
     }
@@ -347,8 +243,10 @@ def main():
     df = pd.concat([X, y_series], axis=1, sort=False)
 
     # select features to be trained
-    features_cat = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
-    features_num = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
+    # features_cat = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']
+    # features_num = ['age', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
+    features_cat = ['workclass', 'education', 'martial-status', 'race', 'sex', 'native-country']
+    features_num = ['age', 'education-num', 'hours-per-week']
 
     # select page in the left side of webpage    
     select_page = st.sidebar.radio('**Index:**', ["Introduction", "Data analysis", "Model Training", "Fairness analysis", "User input prediction"])
@@ -367,7 +265,10 @@ def main():
         st.markdown("**To begin, here are a couple of example data for your reference:**")
         st.dataframe(X.head())
 
-        st.markdown("You can access the Data Analysis page or the User Input Prediction page via the selection bar located on the left side.")
+        st.markdown("Here are the statistics about the datasets:")
+        st.dataframe(X.describe().drop(columns=['fnlwgt']))
+
+        st.markdown("You can access the Data analysis page, Model training page, Fairness analysis page, or the User input prediction page via the selection bar located on the left side.")
 
     elif select_page == "Data analysis":
         # plot_feature_distribution(X)
@@ -397,6 +298,7 @@ def main():
         # Plot distribution of selected feature
         if model_select:
             st.markdown("Building the model with the data sets...")
+            st.markdown("Here are the results:")
             _, _, _ = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, model_select, print_report=True)
             # st.markdown("Completed!")
 
@@ -442,7 +344,8 @@ def main():
 
             
             if st.button('Predict Income Using Model (excluding sex)', type='primary'):
-                features_cat_without_sex = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'native-country']
+                # features_cat_without_sex = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'native-country']
+                features_cat_without_sex = ['workclass', 'education', 'martial-status', 'race', 'native-country']
                 scaler_without_sex, enc_without_sex, model_without_sex = build_model(df.drop(columns=['income']), df['income'], features_cat_without_sex, features_num, model_select)
                 X_user_preprocess_without_sex = preprocessing_data(X_user, enc_without_sex, scaler_without_sex, features_cat_without_sex, features_num)
                 y_user_without_sex = model_without_sex.predict(X_user_preprocess_without_sex)[0]
@@ -451,7 +354,8 @@ def main():
                 st.write("")
             
             if st.button('Predict Income Using Model (excluding race)', type='primary'):
-                features_cat_without_race = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'sex', 'native-country']
+                # features_cat_without_race = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'sex', 'native-country']
+                features_cat_without_race = ['workclass', 'education', 'martial-status', 'sex']
                 scaler_without_race, enc_without_race, model_without_race = build_model(df.drop(columns=['income']), df['income'], features_cat_without_race, features_num, model_select)
                 X_user_preprocess_without_race = preprocessing_data(X_user, enc_without_race, scaler_without_race, features_cat_without_race, features_num)
                 y_user_without_race = model_without_race.predict(X_user_preprocess_without_race)[0]

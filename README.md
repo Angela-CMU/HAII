@@ -7,6 +7,10 @@
 - Jyoshna Sarva (jsarva@andrew.cmu.edu)
 
 
+## Quick Website Overview
+![Overview](images/Readme.gif)
+
+
 ## Project Overview
 Our project utilizes income datasets sourced from various Census surveys and programs, which can be found at [UC Irvine Machine Learning Repository](https://archive.ics.uci.edu/dataset/2/adult). 
 
@@ -27,7 +31,7 @@ All the functionalities mentioned above offer a highly interactive experience.
 
 
 ## Access our website
-We've launched our website for users to explore! Feel free to visit the website we've crafted [here]().
+We've launched our website for users to explore! Feel free to visit the website we've crafted [here](https://haii-fairpay.streamlit.app/).
 
 
 ## Building and testing locally
@@ -39,6 +43,7 @@ If you're intrigued by our project and wish to build upon it, you can clone our 
 Throughout our project, we've identified some potential biases. 
 - Firstly, there's a sampling bias, where over 90% of the data is derived from white individuals and over 66% from males. This imbalance in the data renders it unrepresentative of each demographic group, thereby limiting the generalizability of our results to the broader population. 
 - Secondly, there's a concern regarding response bias, as the data is collected through survey responses. This prompts questions about the honesty of respondents and whether there were adequate data validation processes in place to ensure the reliability of the information collected.
+- Next, our Fairness analysis page of our website reveals potential biases within different demographic groups. For instance, when analyzing the 'race' feature, our plotted data indicates that both White individuals and Asian-Pacific Islanders have over 25% of individuals earning incomes larger than $50K, whereas other racial groups have less than 12.5%. Similarly, when 'sex' is selected as the feature, the data shows that over 30% of males in the dataset earn salaries larger than $50K, while less than 11% of females achieve the same.
 
 Our main conclusion emphasizes that bias can arise not only from models but also from the process of data collection itself. Therefore, it's vital to establish guidelines for fair data collection to effectively mitigate potential biases.
 
@@ -53,4 +58,7 @@ In response to the feedback received, we've introduced a User Input Prediction p
 ### Lesson learned from lectures
 All members of our team are currently enrolled in the computational data science program at CMU, having strong backgrounds in data science. Prior to taking this course, we were well-versed in the data analysis process. However, we had little awareness of how the data collection, analysis, and model prediction phases could potentially introduce biases and unfairness. It's excited that we've acknowledged the significance of fairness and integrated it into our project. This crucial insight was gained through our participation in the Human AI Interaction course!
 
+
+## Disclaimer
+Kindly be aware that our project is designed to offer an interactive experience for analyzing potential biases in salary prediction and analysis. Therefore, it's important to acknowledge that bias might be involved in the process.
 
