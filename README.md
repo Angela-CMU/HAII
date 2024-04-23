@@ -30,6 +30,10 @@ All the functionalities mentioned above offer a highly interactive experience.
 We've launched our website for users to explore! Feel free to visit the website we've crafted [here]().
 
 
+## Website overview
+![Introduction](images/Introduction.gif)
+
+
 ## Building and testing locally
 If you're intrigued by our project and wish to build upon it, you can clone our repository. The primary website logic resides in src/app.py and can be customized to suit your needs. To launch the website, simply navigate to the src directory and execute the command `streamlit run app.py`.
 
