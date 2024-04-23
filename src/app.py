@@ -258,6 +258,9 @@ def main():
         st.markdown("To begin, here are a couple of example data for your reference:")
         st.dataframe(X.head())
 
+        st.markdown("Here are the statistics about the datasets:")
+        st.dataframe(X.describe().drop(columns=['fnlwgt']))
+
         st.markdown("You can access the Data analysis page, Model training page, Fairness analysis page, or the User input prediction page via the selection bar located on the left side.")
 
     elif select_page == "Data analysis":
