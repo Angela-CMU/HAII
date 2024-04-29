@@ -18,7 +18,7 @@ st.set_page_config(
 )
 
 st.header("FairPay: Empowering Fairness in Interactive Income Analysis")
-st.write("Team members: *Yen-Ju Wu* (yenjuw@andrew.cmu.edu), *Chien-Yu Liu* (chienyul@andrew.cmu.edu) and *Jyoshna Sarva* (jsarva@andrew.cmu.edu)")
+st.write("Team members: *Yen-Ju Wu* (yenjuw), *Chien-Yu Liu* (chienyul) and *Jyoshna Sarva* (jsarva)")
 
 @st.cache_data
 def load_data():
@@ -42,7 +42,7 @@ def plot_feature_distribution_combined(df):
         # Bar Chart
         # feature_value_counts = df[feature_select].value_counts()
         # feature_df = pd.DataFrame({feature_select: feature_value_counts.index, 'Count': feature_value_counts.values})
-        feature_bar_chart = alt.Chart(df).mark_bar().encode(
+        feature_bar_chart = alt.Chart(df).mark_bar(color='#F9CB9C').encode(
             alt.X(feature_select+':Q', bin=True),
             y='count()',
         ).properties(
@@ -86,7 +86,7 @@ def plot_feature_vs_income(df):
         age_value_counts_concat['age_income_ratio'] = (age_value_counts_concat['count_larger_50k'] / age_value_counts_concat['count']) * 100
         age_value_counts_concat['index_name'] = age_value_counts_concat.index
 
-        age_bar_chart = alt.Chart(age_value_counts_concat).mark_bar().encode(
+        age_bar_chart = alt.Chart(age_value_counts_concat).mark_bar(color='#F9CB9C').encode(
             x='index_name:N',
             y=alt.Y('age_income_ratio:Q', title='Age Income Ratio (%)', scale=alt.Scale(domain=(0, 100))),
         ).properties(
@@ -107,7 +107,7 @@ def plot_feature_vs_income(df):
         feature_value_counts_concat['feature_income_ratio'] = (feature_value_counts_concat['count_larger_50k'] / feature_value_counts_concat['count']) * 100
         feature_value_counts_concat['index_name'] = feature_value_counts_concat.index
 
-        feature_bar_chart = alt.Chart(feature_value_counts_concat).mark_bar().encode(
+        feature_bar_chart = alt.Chart(feature_value_counts_concat).mark_bar(color='#F9CB9C').encode(
             x='index_name:N',
             y=alt.Y('feature_income_ratio:Q', title=feature_select + ' income Ratio (%)', scale=alt.Scale(domain=(0, 100))),
         ).properties(
@@ -262,7 +262,7 @@ def main():
         st.markdown("With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
         
         st.subheader("Datasets")
-        st.markdown("**To begin, here are a couple of example data for your reference:**")
+        st.markdown("To begin, here are a couple of example data for your reference:")
         st.dataframe(X.head())
 
         st.markdown("Here are the statistics about the datasets:")
@@ -300,7 +300,7 @@ def main():
             st.markdown("Building the model with the data sets...")
             st.markdown("Here are the results:")
             _, _, _ = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, model_select, print_report=True)
-            # st.markdown("Completed!")
+            st.markdown("Completed!")
 
     elif select_page == "Fairness analysis":
         st.subheader("Fairness Analysis")
@@ -322,18 +322,18 @@ def main():
         button_val_style = """
             <style>
                 .styled-text {
-                    background-color: #75F3E2; 
+                    background-color: #FFF2CC; 
                     padding: 6px; 
                     border-radius: 5px;
                     font-size: 16px; 
-                    border: 2px solid #FF4B4B;
+                    border: 2px solid #F6B26B;
                 }
             </style>
         """
 
         if model_select:
             X_user = get_user_inp(original_X)
-            if st.button('Predict Income Using Model', type='primary'):
+            if st.button('Predict income using model', type='primary'):
                 # build the original model
                 scaler, enc, model = build_model(df.drop(columns=['income']), df['income'], features_cat, features_num, model_select)
                 X_user_preprocess = preprocessing_data(X_user, enc, scaler, features_cat, features_num)
@@ -343,7 +343,7 @@ def main():
                 st.write("")
 
             
-            if st.button('Predict Income Using Model (excluding sex)', type='primary'):
+            if st.button('Predict income using model (excluding sex)', type='primary'):
                 # features_cat_without_sex = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'race', 'native-country']
                 features_cat_without_sex = ['workclass', 'education', 'martial-status', 'race', 'native-country']
                 scaler_without_sex, enc_without_sex, model_without_sex = build_model(df.drop(columns=['income']), df['income'], features_cat_without_sex, features_num, model_select)
@@ -353,7 +353,7 @@ def main():
                 st.markdown(f'<div class="styled-text">Income: {y_user_without_sex}</div>', unsafe_allow_html=True)
                 st.write("")
             
-            if st.button('Predict Income Using Model (excluding race)', type='primary'):
+            if st.button('Predict income using model (excluding race)', type='primary'):
                 # features_cat_without_race = ['workclass', 'education', 'martial-status', 'occupation', 'relationship', 'sex', 'native-country']
                 features_cat_without_race = ['workclass', 'education', 'martial-status', 'sex']
                 scaler_without_race, enc_without_race, model_without_race = build_model(df.drop(columns=['income']), df['income'], features_cat_without_race, features_num, model_select)
