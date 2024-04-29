@@ -253,8 +253,8 @@ def main():
 
     if select_page == "Introduction":
         # st.markdown("Our project utilizes income datasets sourced from various Census surveys and programs. With this data, our aim is to uncover patterns within salary information, recognizing the paramount importance individuals place on salary in their career trajectories. We seek to identify the common factors influencing salary while scrutinizing the presence of biases within the job market. We are attentive to potential biases introduced during data collection processes and vigilant against biases emerging during data analysis, whether stemming from human factors or algorithmic/model biases. Our project not only provides users with opportunities to interact with the data and glean insights but also endeavors to identify and address potential biases throughout the entire process.")
-        st.image('introduction_image.jpeg')
-        st.markdown("Image Source: [Link](https://www.tal.sg/tafep/-/media/TAL/Tafep/Resources/Articles/Images/2021/Fair-Wage.jpg)")
+        # st.image('introduction_image.jpeg')
+        # st.markdown("Image Source: [Link](https://www.tal.sg/tafep/-/media/TAL/Tafep/Resources/Articles/Images/2021/Fair-Wage.jpg)")
 
         st.subheader("Source of Our Datasets")
         url = "https://archive.ics.uci.edu/dataset/2/adult"
@@ -280,8 +280,8 @@ def main():
 
     elif select_page == "Model Training":    
         st.subheader("Types of Models for Dataset Training")
-        st.image('machine_learning.png')
-        st.markdown("Image Source: [Link](https://emeritus.org/in/wp-content/uploads/sites/3/2023/01/What-is-machine-learning-Definition-types.jpg.optimal.jpg)")
+        # st.image('machine_learning.png')
+        # st.markdown("Image Source: [Link](https://emeritus.org/in/wp-content/uploads/sites/3/2023/01/What-is-machine-learning-Definition-types.jpg.optimal.jpg)")
         
         st.markdown("""Please select the machine learning model you wish to train with the datasets.
                     Please note that we have balanced the data distribution by upsampling the data where income='>50k' to match the number of data points where income='<50k'.""")
@@ -309,8 +309,8 @@ def main():
         plot_feature_vs_income(df)
 
     elif select_page == "User input prediction":
-        st.image('human_ai_interaction.jpeg')
-        st.markdown("Image Source: [Link](https://media.licdn.com/dms/image/D5612AQESmFKqdwyoRw/article-cover_image-shrink_720_1280/0/1685502582544?e=2147483647&v=beta&t=FLScIzP0WvFPT9jEcRU89jrGW8zewd5Q2H_Sno8ITYE)")
+        # st.image('human_ai_interaction.jpeg')
+        # st.markdown("Image Source: [Link](https://media.licdn.com/dms/image/D5612AQESmFKqdwyoRw/article-cover_image-shrink_720_1280/0/1685502582544?e=2147483647&v=beta&t=FLScIzP0WvFPT9jEcRU89jrGW8zewd5Q2H_Sno8ITYE)")
         st.subheader("User Input Prediction")
         st.markdown("Please select the machine learning model you wish to train with the datasets. Please input the user data to be used as input for predicting with the models on the left side of the page.")
         st.markdown("In this section, we'll construct three models based on the model type you've chosen. Each model will have a different feature set: one using all features, one using all features except sex, and one using all features except race. This comparison will help us assess whether the model's predictions differ, indicating potential bias towards sex or race.")
